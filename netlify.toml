@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  command = "npm run dev"
+  port = 5173
+
+# Puedes agregar variables de entorno en Netlify UI o aquí si usas Netlify CLI
+# [context.production.environment]
+#   VITE_SUPABASE_URL = "<tu_supabase_url>"
+#   VITE_SUPABASE_ANON_KEY = "<tu_anon_key>"
