@@ -1,0 +1,6 @@
+import{c as t,j as e,i as a}from"./index-COvD-dsj.js";/**
+ * @license lucide-react v0.344.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const s=t("AlertTriangle",[["path",{d:"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z",key:"c3ski4"}],["path",{d:"M12 9v4",key:"juzpu7"}],["path",{d:"M12 17h.01",key:"p32p05"}]]),x=()=>e.jsx("div",{className:"min-h-screen flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900",children:e.jsxs("div",{className:"text-center",children:[e.jsx("div",{className:"flex justify-center mb-6",children:e.jsx(s,{className:"h-16 w-16 text-gray-400 dark:text-gray-500"})}),e.jsx("h1",{className:"text-4xl font-extrabold text-gray-900 dark:text-white mb-2",children:"404"}),e.jsx("h2",{className:"text-2xl font-bold text-gray-900 dark:text-white",children:"Page Not Found"}),e.jsx("p",{className:"mt-4 text-base text-gray-600 dark:text-gray-400 max-w-md mx-auto",children:"The page you're looking for doesn't exist or has been moved."}),e.jsx("div",{className:"mt-8",children:e.jsx(a,{to:"/",className:"btn btn-primary px-6 py-2",children:"Back to Home"})})]})});export{x as default};

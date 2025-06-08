@@ -1,0 +1,1 @@
+import{u as a,j as e}from"./index-COvD-dsj.js";import{C as o}from"./CreateBlogForm-B-eUgRkR.js";const l=()=>{const t=a(),s=()=>{t("/blogs")};return e.jsxs("div",{className:"max-w-xl mx-auto py-8 px-4",children:[e.jsx("h2",{className:"text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white",children:"Crear nuevo blog"}),e.jsx(o,{onSuccess:s})]})};export{l as default};
