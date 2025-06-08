@@ -32,9 +32,7 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
   return (
     <div className="flex flex-col h-full p-4 gap-6 bg-white">
       {/* Logo */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-2xl font-bold text-blue-600">VientoSur</span>
-      </div>
+      {/* Se eliminó la palabra VientoSur */}
       {/* Menú */}
       <nav className="flex flex-col gap-2">
         <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={() => navigate('/')}>{menuItems[0].icon}<span>{menuItems[0].label}</span></button>

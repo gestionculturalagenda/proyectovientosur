@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { HiOutlineMinus, HiOutlineX } from 'react-icons/hi';
+import { ConversationsList } from '../messages/ConversationsList';
 import { useAuthStore } from '../../store/authStore';
 import { useRecentConversations } from '../../hooks/useRecentConversations';
-import { HiOutlineChatAlt2 } from 'react-icons/hi';
 
 interface ConversationModalProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface ConversationModalProps {
 const ConversationModal: React.FC<ConversationModalProps> = ({ open, onClose }) => {
   const { user } = useAuthStore();
   const { conversations, loading } = useRecentConversations(user?.id || '');
+  const [minimized, setMinimized] = useState(false);
 
   if (!open) return null;
   return (
@@ -19,36 +21,33 @@ const ConversationModal: React.FC<ConversationModalProps> = ({ open, onClose }) 
       <div className="absolute inset-0 bg-black bg-opacity-40 pointer-events-auto" onClick={onClose} />
       {/* Modal flotante */}
       <aside
-        className="relative mt-8 mr-8 w-[min(22rem,90vw)] max-w-full h-[80vh] bg-white shadow-2xl rounded-xl z-50 flex flex-col pointer-events-auto animate-fade-in"
+        className={`relative mt-8 mr-8 w-[min(22rem,90vw)] max-w-full h-[80vh] bg-white shadow-2xl rounded-xl z-50 flex flex-col pointer-events-auto animate-fade-in ${minimized ? 'h-16 overflow-hidden' : ''}`}
         style={{ minWidth: '18rem' }}
       >
-        <div className="flex items-center justify-between p-4 border-b">
-          <span className="font-bold text-lg flex items-center gap-2 text-blue-600">
-            <HiOutlineChatAlt2 /> Conversaciones
-          </span>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500 text-2xl">×</button>
+        <div className="flex items-center justify-between p-4 border-b bg-white rounded-t-xl">
+          <div className="flex items-center gap-2">
+            <img src={user?.avatar || '/default-avatar.png'} alt={user?.displayName || user?.username} className="w-10 h-10 rounded-full" />
+            <div className="font-semibold text-sm text-blue-600">@{user?.username}</div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setMinimized((v) => !v)} className="text-gray-400 hover:text-blue-500 text-xl" title="Minimizar">
+              <HiOutlineMinus />
+            </button>
+            <button onClick={onClose} className="text-gray-400 hover:text-red-500 text-2xl" title="Cerrar">
+              <HiOutlineX />
+            </button>
+          </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-4">
-          {loading ? (
-            <div className="text-center text-gray-500 py-8">Cargando...</div>
-          ) : conversations.length === 0 ? (
-            <div className="text-center text-gray-400 py-8">No tienes conversaciones aún.</div>
-          ) : (
-            <ul className="space-y-2">
-              {conversations.map((c) => (
-                <li key={c.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 cursor-pointer">
-                  <img src={c.avatar} alt={c.displayName} className="w-10 h-10 rounded-full object-cover" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-gray-800 truncate">{c.displayName}</div>
-                    <div className="text-xs text-gray-500 truncate">@{c.username}</div>
-                    <div className="text-xs text-gray-400 truncate max-w-[180px]">{c.lastMessage}</div>
-                    <div className="text-[10px] text-gray-400">{new Date(c.lastTime).toLocaleString()}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        {!minimized && (
+          <>
+            {/* Sugerencias y barra de búsqueda ahora están en ConversationsList */}
+            <div className="flex-1 overflow-y-auto">
+              <ConversationsList
+                onSelectUser={() => {}}
+              />
+            </div>
+          </>
+        )}
       </aside>
     </div>
   );

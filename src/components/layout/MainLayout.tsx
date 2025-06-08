@@ -6,6 +6,7 @@ import MainContent from './MainContent';
 import RightSidebar from './RightSidebar';
 import MobileHeader from './MobileHeader';
 import ConversationModal from './ConversationModal';
+import Header from './Header';
 
 const MainLayout: React.FC = () => {
   const [leftOpen, setLeftOpen] = useState(false);
@@ -14,11 +15,14 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header móvil */}
+      {/* Header general solo escritorio */}
+      <Header onOpenConversations={() => setShowConversations(true)} />
+      {/* Header móvil solo móvil */}
       <MobileHeader
         onOpenLeft={() => setLeftOpen((v) => !v)}
         onOpenRight={() => setRightOpen((v) => !v)}
       />
+      {/* Aquí puedes agregar un Header general si existe, o dejar solo el MobileHeader para móviles */}
       <div className="flex flex-1 gap-6 max-w-screen-2xl mx-auto w-full">
         {/* Sidebar izquierdo */}
         <aside
@@ -41,7 +45,10 @@ const MainLayout: React.FC = () => {
           <ConversationModal open={showConversations} onClose={() => setShowConversations(false)} />
         </aside>
       </div>
-      <BottomNavigation />
+      {/* Panel de navegación inferior solo en móvil */}
+      <div className="lg:hidden">
+        <BottomNavigation />
+      </div>
       {/* Backdrop para móvil */}
       {(leftOpen || rightOpen) && (
         <div
