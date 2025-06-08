@@ -81,7 +81,16 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectUs
             <div className="text-xs text-gray-400">Sin sugerencias</div>
           ) : suggested.map((s) => (
             <div key={s.id} className="flex items-center gap-2 p-2 rounded hover:bg-blue-50 cursor-pointer"
-              onClick={() => onSelectUser(s.id, s.nombre_completo || s.nombre_usuario, s.avatar_url || '/default-avatar.png')}
+              onClick={async () => {
+                if (!user) return;
+                // Crear chat con el usuario sugerido si no existe
+                const existing = conversations.find((c: any) => c.id === s.id);
+                if (!existing) {
+                  await supabase.from('conversaciones').insert({ user1: user.id, user2: s.id });
+                  await fetchConversations();
+                }
+                onSelectUser(s.id, s.nombre_completo || s.nombre_usuario, s.avatar_url || '/default-avatar.png');
+              }}
             >
               <img src={s.avatar_url || '/default-avatar.png'} alt={s.nombre_completo || s.nombre_usuario} className="w-8 h-8 rounded-full object-cover" />
               <div className="flex-1 min-w-0">

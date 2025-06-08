@@ -1,6 +1,7 @@
 import { HiOutlineUsers, HiOutlineHashtag, HiOutlineCalendar } from 'react-icons/hi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ConversationsList } from '../messages/ConversationsList';
+import { useEventStore } from '../../store/eventStore';
 
 const onlineUsers = [
 	{ name: 'Lucía', avatar: 'https://i.pravatar.cc/44' },
@@ -8,16 +9,21 @@ const onlineUsers = [
 	{ name: 'Sofía', avatar: 'https://i.pravatar.cc/46' },
 ];
 
-const events = [
-	{ title: 'Taller de escritura', date: '10 Jun, 18:00' },
-	{ title: 'Fiesta de bienvenida', date: '12 Jun, 21:00' },
-];
-
 const trends = ['#cultura', '#eventos', '#comunidad', '#tendencias'];
 
 const RightSidebar: React.FC = () => {
-	// Estado para mostrar el modal de conversaciones
 	const [showConversations, setShowConversations] = useState(false);
+	const { events, fetchEvents, isLoading } = useEventStore();
+
+	useEffect(() => {
+		fetchEvents();
+	}, [fetchEvents]);
+
+	const upcomingEvents = events
+		.filter(e => new Date(e.date) >= new Date())
+		.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+		.slice(0, 5);
+
 	// Handler para seleccionar usuario (puedes personalizar la acción)
 	const handleSelectUser = (userId: string, userName: string, userAvatar: string) => {
 		// Aquí puedes manejar la selección de usuario/conversación
@@ -50,14 +56,20 @@ const RightSidebar: React.FC = () => {
 				<div className="font-semibold mb-2 text-gray-700 flex items-center gap-2">
 					<HiOutlineCalendar /> Eventos próximos
 				</div>
-				<ul className="text-sm text-gray-600 space-y-1">
-					{events.map((e, i) => (
-						<li key={i} className="flex justify-between">
-							<span>{e.title}</span>
-							<span className="text-xs text-gray-400">{e.date}</span>
-						</li>
-					))}
-				</ul>
+				{isLoading ? (
+					<div className="text-xs text-gray-400">Cargando eventos...</div>
+				) : (
+					<ul className="text-sm text-gray-600 space-y-1">
+						{upcomingEvents.length === 0 ? (
+							<li className="text-xs text-gray-400">No hay eventos próximos</li>
+						) : upcomingEvents.map((e, i) => (
+							<li key={e.id} className="flex justify-between">
+								<span>{e.title}</span>
+								<span className="text-xs text-gray-400">{new Date(e.date).toLocaleString()}</span>
+							</li>
+						))}
+					</ul>
+				)}
 			</div>
 			{/* Tendencias */}
 			<div className="rounded-lg shadow-md p-4 bg-white">
