@@ -31,35 +31,35 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
   };
 
   return (
-    <div className="flex flex-col h-full p-4 gap-6 bg-white">
+    <div className="flex flex-col h-full p-4 gap-6 bg-white dark:bg-gray-900">
       {/* Logo */}
       {/* Se eliminó la palabra VientoSur */}
       {/* Menú */}
       <nav className="flex flex-col gap-2">
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={() => navigate('/')}>{menuItems[0].icon}<span>{menuItems[0].label}</span></button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={() => navigate('/profile')}>{menuItems[1].icon}<span>{menuItems[1].label}</span></button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={onOpenConversations}>{menuItems[2].icon}<span>{menuItems[2].label}</span></button>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/')}>{menuItems[0].icon}<span>{menuItems[0].label}</span></button>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/profile')}>{menuItems[1].icon}<span>{menuItems[1].label}</span></button>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={onOpenConversations}>{menuItems[2].icon}<span>{menuItems[2].label}</span></button>
         {/* Botones adicionales debajo de Mensajes */}
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={() => navigate('/agenda')}>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/agenda')}>
           <EventNote fontSize="small" />
           <span>Agenda</span>
         </button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={() => navigate('/calendar')}>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/calendar')}>
           <CalendarToday fontSize="small" />
           <span>Calendario</span>
         </button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 text-gray-800 font-medium transition" onClick={() => navigate('/blogs')}>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/blogs')}>
           <Article fontSize="small" />
           <span>Blogs</span>
         </button>
       </nav>
       {/* Perfil */}
-      <div className="rounded-lg shadow-md p-4 bg-white mb-2">
+      <div className="rounded-lg shadow-md p-4 bg-white dark:bg-gray-800 mb-2">
         <div className="flex items-center gap-3">
           <img src={user?.avatar || 'https://i.pravatar.cc/40'} alt="avatar" className="w-10 h-10 rounded-full" />
           <div>
-            <div className="font-semibold text-gray-800">{user?.displayName || 'Usuario'}</div>
-            <div className="text-xs text-gray-500">@{user?.username || 'usuario'}</div>
+            <div className="font-semibold text-gray-800 dark:text-gray-100">{user?.displayName || 'Usuario'}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-300">@{user?.username || 'usuario'}</div>
           </div>
         </div>
         <button className="mt-3 flex items-center gap-2 text-sm text-red-500 hover:underline" onClick={handleLogout}>
@@ -67,11 +67,11 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
         </button>
       </div>
       {/* Notificaciones */}
-      <div className="rounded-lg shadow-md p-4 bg-white">
-        <div className="font-semibold mb-2 text-gray-700 flex items-center gap-2">
+      <div className="rounded-lg shadow-md p-4 bg-white dark:bg-gray-800">
+        <div className="font-semibold mb-2 text-gray-700 dark:text-gray-100 flex items-center gap-2">
           <HiOutlineBell /> Notificaciones
         </div>
-        <ul className="text-sm text-gray-600 space-y-1">
+        <ul className="text-sm text-gray-600 dark:text-gray-200 space-y-1">
           {notifications.map((n, i) => (
             <li key={i} className="list-disc ml-4">{n}</li>
           ))}

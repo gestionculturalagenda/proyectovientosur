@@ -26,6 +26,8 @@ interface AuthState {
   checkAuth: () => Promise<void>;
 }
 
+let heartbeatInterval: NodeJS.Timeout | null = null;
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
@@ -86,7 +88,14 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false
       });
-
+      // Marcar usuario como online y empezar heartbeat
+      if (dbUser?.id) {
+        await supabase.from('usuarios').update({ last_online: new Date().toISOString() }).eq('id', dbUser.id);
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(async () => {
+          await supabase.from('usuarios').update({ last_online: new Date().toISOString() }).eq('id', dbUser.id);
+        }, 60000); // cada 60 segundos
+      }
       toast.success('¡Bienvenido de nuevo!');
     } catch (error) {
       toast.error('Error al iniciar sesión');
@@ -149,6 +158,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     try {
+      const user = useAuthStore.getState().user;
+      if (user?.id) {
+        await supabase.from('usuarios').update({ last_online: new Date().toISOString() }).eq('id', user.id);
+      }
+      if (heartbeatInterval) clearInterval(heartbeatInterval);
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 

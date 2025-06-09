@@ -7,13 +7,13 @@ interface MobileHeaderProps {
 
 const MobileHeader: React.FC<MobileHeaderProps> = ({ onOpenLeft, onOpenRight }) => {
   return (
-    <header className="lg:hidden sticky top-0 z-40 bg-white shadow-md flex items-center justify-between px-4 py-2">
-      <button onClick={onOpenLeft} className="p-2 rounded-full hover:bg-blue-50">
-        <HiOutlineMenu size={26} className="text-blue-600" />
+    <header className="lg:hidden sticky top-0 z-40 bg-white dark:bg-gray-900 shadow-md flex items-center justify-between px-4 py-2 border-b border-gray-100 dark:border-gray-800">
+      <button onClick={onOpenLeft} className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-800">
+        <HiOutlineMenu size={26} className="text-blue-600 dark:text-blue-300" />
       </button>
-      <span className="font-bold text-lg text-blue-600">VientoSur</span>
-      <button onClick={onOpenRight} className="p-2 rounded-full hover:bg-blue-50">
-        <HiOutlineDotsHorizontal size={26} className="text-blue-600" />
+      <span className="font-bold text-lg text-blue-600 dark:text-blue-300">VientoSur</span>
+      <button onClick={onOpenRight} className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-800">
+        <HiOutlineDotsHorizontal size={26} className="text-blue-600 dark:text-blue-300" />
       </button>
     </header>
   );
