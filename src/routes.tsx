@@ -27,6 +27,7 @@ const PostDetailPage = lazy(() => import('./pages/PostDetailPage'));
 const BlogDetailPage = lazy(() => import('./pages/BlogDetailPage'));
 const CulturalEventDetailPage = lazy(() => import('./pages/CulturalEventDetailPage'));
 const CumpleanosDetailPage = lazy(() => import('./pages/CumpleanosDetailPage'));
+const ChatWindowPage = lazy(() => import('./pages/ChatWindowPage'));
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -73,6 +74,7 @@ const AppRoutes = () => {
           <Route path="blogs/:id" element={<BlogDetailPage />} />
           <Route path="eventos/:id" element={<CulturalEventDetailPage />} />
           <Route path="cumpleanos/:id" element={<CumpleanosDetailPage />} />
+          <Route path="/chat" element={<ChatWindowPage />} />
         </Route>
         
         <Route path="*" element={<NotFoundPage />} />

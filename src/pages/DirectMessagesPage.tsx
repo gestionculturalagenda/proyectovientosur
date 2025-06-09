@@ -32,7 +32,6 @@ const DirectMessagesPage: React.FC = () => {
     <div className="flex h-[80vh] max-w-4xl mx-auto mt-6 border rounded shadow bg-white overflow-hidden">
       {/* Lista de conversaciones */}
       <div className="w-1/3 border-r bg-gray-50">
-        <div className="p-3 font-bold border-b">Conversaciones</div>
         <ConversationsList onSelectUser={(userId, userName, userAvatar) => handleSelectUser(userId, userName, userAvatar)} />
       </div>
       {/* Ventana de chat */}

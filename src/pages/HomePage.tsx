@@ -8,6 +8,7 @@ import EventoCulturalCard from '../components/cultural/EventoCulturalCard';
 import CreateEventForm from '../components/calendar/CreateEventForm';
 import { Event } from '../store/eventStore';
 import StoriesPage from './StoriesPage';
+import SuggestionsToFollow from '../components/profile/SuggestionsToFollow';
 
 const FEED_MODES = [
   { label: 'Para ti', value: 'feed' },
@@ -80,12 +81,15 @@ const HomePage = () => {
     <div className="space-y-4">
       {/* Stories Circles en la parte superior */}
       <StoriesPage />
+      {/* Formulario para crear post */}
       <CreatePostForm onSuccess={() => {
         setTimeout(() => {
           const firstPost = document.querySelector('.feed-item');
           if (firstPost) firstPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
       }} />
+      {/* Sugerencias de perfiles a seguir debajo del textarea */}
+      <SuggestionsToFollow />
 
       {/* Modal de edición de evento */}
       {editingEvent && (

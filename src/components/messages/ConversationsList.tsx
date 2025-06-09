@@ -4,7 +4,6 @@ import { useRecentConversations } from '../../hooks/useRecentConversations';
 import { supabase } from '../../lib/supabase';
 import Modal from '../ui/Modal';
 import { UserSearch } from '../profile/UserSearch';
-import { Pencil } from 'lucide-react';
 
 interface ConversationsListProps {
   onSelectUser: (userId: string, userName: string, userAvatar: string) => void;
@@ -89,7 +88,7 @@ export const ConversationsList: React.FC<ConversationsListProps> = ({ onSelectUs
                   await supabase.from('conversaciones').insert({ user1: user.id, user2: s.id });
                   await fetchConversations();
                 }
-                onSelectUser(s.id, s.nombre_completo || s.nombre_usuario, s.avatar_url || '/default-avatar.png');
+                window.location.href = `/chat?userId=${s.id}&userName=${encodeURIComponent(s.nombre_completo || s.nombre_usuario)}&userAvatar=${encodeURIComponent(s.avatar_url || '/default-avatar.png')}`;
               }}
             >
               <img src={s.avatar_url || '/default-avatar.png'} alt={s.nombre_completo || s.nombre_usuario} className="w-8 h-8 rounded-full object-cover" />
