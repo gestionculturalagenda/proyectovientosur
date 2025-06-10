@@ -15,7 +15,7 @@ interface CreatePostFormProps {
 
 const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
   const [content, setContent] = useState('');
-  const [mediaUrl, setMediaUrl] = useState('');
+  const [mediaUrls, setMediaUrls] = useState<Array<{ url: string; type: string; name: string }>>([]);
   const [postType, setPostType] = useState<PostType>('text');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const audioRecorderRef = useRef<any>(null);
@@ -28,6 +28,10 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
   const [showAttachModal, setShowAttachModal] = useState(false);
   const [attachType, setAttachType] = useState<'media' | 'music' | 'document' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewFiles, setPreviewFiles] = useState<Array<{ url: string; type: string; name: string }>>([]);
+  const [modalText, setModalText] = useState('');
+  const [showModalEmojiPicker, setShowModalEmojiPicker] = useState(false);
 
   const { user } = useAuthStore();
   const { addPost } = usePostStore();
@@ -39,7 +43,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
       toast.error('Debes iniciar sesión para crear una publicación');
       return;
     }
-    if (!content.trim() && !mediaUrl) {
+    if (!content.trim() && mediaUrls.length === 0) {
       toast.error('Por favor, agrega contenido o un archivo');
       return;
     }
@@ -49,11 +53,11 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
         userId: user.id,
         type: postType,
         content: content.trim(),
-        mediaUrl: mediaUrl || undefined,
+        mediaUrls: mediaUrls.length > 0 ? mediaUrls : undefined, // Cambia a mediaUrls
         isFavorite: false
       });
       setContent('');
-      setMediaUrl('');
+      setMediaUrls([]);
       setPostType('text');
       toast.success('¡Publicación creada exitosamente!');
       if (onSuccess) onSuccess();
@@ -67,7 +71,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
 
   // Nuevo handler para integración con FileUploadWithPreview
   const handleFileSelect = (fileUrl: string | null) => {
-    setMediaUrl(fileUrl || '');
+    setMediaUrls(fileUrl ? [{ url: fileUrl, type: 'document', name: '' }] : []);
     if (fileUrl) {
       // Detectar tipo por extensión
       if (fileUrl.match(/\.(jpg|jpeg|png|gif)$/i)) setPostType('image');
@@ -81,7 +85,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
 
   // Nuevo handler para integración con AudioRecorder
   const handleAudioReady = (audioUrl: string | null) => {
-    setMediaUrl(audioUrl || '');
+    setMediaUrls(audioUrl ? [{ url: audioUrl, type: 'audio', name: '' }] : []);
     setPostType(audioUrl ? 'audio' : 'text');
     setShowAudioRecorder(false); // Cierra el modal de grabación y previsualización al adjuntar el audio
     setIsRecording(false);
@@ -89,7 +93,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
 
   // Nuevo handler para integración con VideoRecorder
   const handleVideoReady = (videoUrl: string | null) => {
-    setMediaUrl(videoUrl || '');
+    setMediaUrls(videoUrl ? [{ url: videoUrl, type: 'video', name: '' }] : []);
     setPostType(videoUrl ? 'video' : 'text');
     setShowVideoRecorder(false);
   };
@@ -147,15 +151,47 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
     setAttachType(type);
     setTimeout(() => fileInputRef.current?.click(), 200);
   };
+  // Modifica handleAttachFile para permitir múltiples archivos
   const handleAttachFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // Subir archivo y obtener URL usando FileUploadWithPreview
-    // Simulamos subida directa y obtenemos URL local para previsualización
-    const url = URL.createObjectURL(file);
-    handleFileSelect(url);
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const newFiles = Array.from(files).map(file => {
+      const url = URL.createObjectURL(file);
+      let type = 'document';
+      if (file.type.startsWith('image/')) type = 'image';
+      else if (file.type.startsWith('video/')) type = 'video';
+      else if (file.type.startsWith('audio/')) type = 'audio';
+      return { url, type, name: file.name };
+    });
+    setPreviewFiles(prev => [...prev, ...newFiles]);
+    setShowPreviewModal(true);
     setShowAttachModal(false);
     setAttachType(null);
+  };
+  // Eliminar archivo del modal
+  const handleRemovePreviewFile = (idx: number) => {
+    setPreviewFiles(prev => prev.filter((_, i) => i !== idx));
+  };
+  // Agregar emoji al texto del modal
+  const handleModalEmojiSelect = (emoji: any) => {
+    setModalText(modalText + (emoji.native || emoji.skins?.[0]?.native || ''));
+    setShowModalEmojiPicker(false);
+  };
+  // Handler para confirmar adjunto múltiple
+  const handleConfirmPreview = () => {
+    if (previewFiles.length > 0) {
+      setMediaUrls(previewFiles);
+      setPostType(previewFiles[0].type as PostType); // El tipo principal será el del primer archivo
+      setContent(modalText);
+    }
+    setShowPreviewModal(false);
+    setPreviewFiles([]);
+    setModalText('');
+  };
+  const handleCancelPreview = () => {
+    setShowPreviewModal(false);
+    setPreviewFiles([]);
+    setModalText('');
   };
 
   return (
@@ -178,7 +214,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
               className="flex-1 p-4 text-lg text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 shadow-sm resize-none min-h-[48px] max-h-[160px] transition-all placeholder-gray-400 dark:placeholder-gray-500"
               rows={2}
               aria-label="Contenido de la publicación"
-              required={!mediaUrl}
+              required={!mediaUrls.length}
               disabled={isSubmitting}
               style={{height: 'auto', boxShadow: '0 2px 8px 0 rgba(0,0,0,0.04)'}}
               onInput={e => {
@@ -214,10 +250,10 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
           {/* Espacio flexible para empujar los botones a la derecha */}
           <div className="flex-1" />
           {/* Botón micrófono o enviar, cambia según contenido */}
-          {content.trim() || mediaUrl ? (
+          {content.trim() || mediaUrls.length > 0 ? (
             <button 
               type="submit"
-              disabled={isSubmitting || (!content.trim() && !mediaUrl)}
+              disabled={isSubmitting || (!content.trim() && mediaUrls.length === 0)}
               className="btn btn-primary p-2 rounded-full flex items-center justify-center ml-1"
               aria-busy={isSubmitting}
             >
@@ -318,6 +354,66 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
                 style={{ display: 'none' }}
                 onChange={handleAttachFile}
               />
+            </div>
+          </div>
+        )}
+        {/* Modal de previsualización de archivos adjuntos personalizado */}
+        {showPreviewModal && (
+          <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 w-full max-w-md flex flex-col items-center gap-4 relative animate-slide-up">
+              <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={handleCancelPreview}>&times;</button>
+              <h3 className="text-lg font-bold mb-2">Previsualización de archivos</h3>
+              <div className="w-full flex flex-wrap gap-3 items-center justify-center">
+                {previewFiles.map((file, idx) => (
+                  <div key={file.url} className="relative group">
+                    {file.type === 'image' && (
+                      <img src={file.url} alt="Previsualización" className="rounded-lg max-h-32 max-w-[120px] object-contain border" />
+                    )}
+                    {file.type === 'video' && (
+                      <video src={file.url} controls className="rounded-lg max-h-32 max-w-[120px] object-contain border" />
+                    )}
+                    {file.type === 'audio' && (
+                      <audio src={file.url} controls className="w-28" />
+                    )}
+                    {file.type === 'document' && (
+                      <div className="flex flex-col items-center w-28">
+                        <FileText className="h-8 w-8 text-primary-500 mb-1" />
+                        <span className="text-xs text-gray-700 dark:text-gray-200 truncate">{file.name}</span>
+                      </div>
+                    )}
+                    <button type="button" className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-80 group-hover:opacity-100" onClick={() => handleRemovePreviewFile(idx)} title="Eliminar archivo">&times;</button>
+                  </div>
+                ))}
+                {/* Botón para agregar más archivos */}
+                <label className="flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-primary-300 rounded-lg p-4 hover:bg-primary-50 dark:hover:bg-gray-800 transition-colors">
+                  <Paperclip className="h-6 w-6 text-primary-500 mb-1" />
+                  <span className="text-xs text-primary-700 dark:text-primary-200">Agregar más</span>
+                  <input type="file" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.csv" className="hidden" onChange={handleAttachFile} />
+                </label>
+              </div>
+              {/* Textarea y emojis */}
+              <div className="w-full mt-2">
+                <div className="flex items-center mb-2">
+                  <button type="button" className="p-1 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800" onClick={() => setShowModalEmojiPicker(v => !v)} aria-label="Insertar emoji">
+                    😊
+                  </button>
+                </div>
+                <textarea
+                  className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-none min-h-[48px]"
+                  placeholder="Escribe un mensaje para acompañar tus archivos..."
+                  value={modalText}
+                  onChange={e => setModalText(e.target.value)}
+                />
+                {showModalEmojiPicker && (
+                  <div className="absolute z-50 mt-2">
+                    <Picker data={data} onEmojiSelect={handleModalEmojiSelect} theme="auto" />
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-3 mt-4">
+                <button type="button" className="btn btn-primary px-4 py-2 rounded-full" onClick={handleConfirmPreview} disabled={previewFiles.length === 0}>Adjuntar</button>
+                <button type="button" className="btn btn-secondary px-4 py-2 rounded-full" onClick={handleCancelPreview}>Cancelar</button>
+              </div>
             </div>
           </div>
         )}
