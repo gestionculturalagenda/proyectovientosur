@@ -53,161 +53,88 @@ const CreatePage = () => {
   
   if (selectedType === 'post') {
     return (
-      <div className="animate-slide-up">
+      <div className="animate-slide-up max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
         <div className="flex items-center mb-4">
           <button
             onClick={handleCancel}
             className="text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center mr-auto"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-            </svg>
-            Volver
+            ← Volver
           </button>
-          <h2 className="text-lg font-semibold text-center text-gray-900 dark:text-white">Crear Publicación</h2>
-          <div className="mr-auto"></div> {/* Spacer for centering */}
         </div>
-        
         <CreatePostForm onSuccess={handleSuccess} />
       </div>
     );
   }
-  
   if (selectedType === 'event') {
     return (
-      <div className="animate-slide-up">
+      <div className="animate-slide-up max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
         <div className="flex items-center mb-4">
           <button
             onClick={handleCancel}
             className="text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center mr-auto"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-            </svg>
-            Volver
+            ← Volver
           </button>
-          <h2 className="text-lg font-semibold text-center text-gray-900 dark:text-white">
-            Crear Evento
-          </h2>
-          <div className="mr-auto"></div>
         </div>
-        <CreateEventForm 
-          date={new Date()} 
-          onSuccess={handleSuccess} 
-          onCancel={handleCancel} 
-        />
+        <CreateEventForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
     );
   }
-
-  if (selectedType === 'task') {
-    return (
-      <div className="animate-slide-up">
-        <div className="flex items-center mb-4">
-          <button
-            onClick={handleCancel}
-            className="text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center mr-auto"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-            </svg>
-            Volver
-          </button>
-          <h2 className="text-lg font-semibold text-center text-gray-900 dark:text-white">
-            Crear Tarea
-          </h2>
-          <div className="mr-auto"></div>
-        </div>
-        <CreateTaskForm onSuccess={handleSuccess} onCancel={handleCancel} />
-      </div>
-    );
-  }
-
   if (selectedType === 'birthday') {
     return (
-      <div className="animate-slide-up">
+      <div className="animate-slide-up max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
         <div className="flex items-center mb-4">
           <button
             onClick={handleCancel}
             className="text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center mr-auto"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-            </svg>
-            Volver
+            ← Volver
           </button>
-          <h2 className="text-lg font-semibold text-center text-gray-900 dark:text-white">
-            Crear Cumpleaños
-          </h2>
-          <div className="mr-auto"></div>
         </div>
         <CreateBirthdayForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
     );
   }
-
-  if (selectedType === 'blog') {
+  if (selectedType === 'task') {
     return (
-      <div className="animate-slide-up">
+      <div className="animate-slide-up max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
         <div className="flex items-center mb-4">
           <button
             onClick={handleCancel}
             className="text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center mr-auto"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-            </svg>
-            Volver
+            ← Volver
           </button>
-          <h2 className="text-lg font-semibold text-center text-gray-900 dark:text-white">Publicar Blog</h2>
-          <div className="mr-auto"></div>
         </div>
-        <CreateBlogForm onSuccess={handleSuccess} />
+        <CreateTaskForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
     );
   }
-  
+  if (selectedType === 'blog') {
+    return (
+      <div className="animate-slide-up max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
+        <div className="flex items-center mb-4">
+          <button
+            onClick={handleCancel}
+            className="text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center mr-auto"
+          >
+            ← Volver
+          </button>
+        </div>
+        <CreateBlogForm onSuccess={handleSuccess} onCancel={handleCancel} />
+      </div>
+    );
+  }
   return (
-    <div className="py-4">
-      <h2 className="text-xl font-bold mb-6 text-center text-gray-900 dark:text-white">
-        Crear nuevo contenido
-      </h2>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <CreateOption 
-          icon={<PlusSquare className="h-8 w-8 text-white" />} 
-          label="Publicación" 
-          color="bg-gradient-to-br from-primary-600 to-primary-700 text-white"
-          onClick={() => setSelectedType('post')}
-        />
-        
-        <CreateOption 
-          icon={<Calendar className="h-8 w-8 text-white" />} 
-          label="Evento" 
-          color="bg-gradient-to-br from-secondary-600 to-secondary-700 text-white"
-          onClick={() => handleCreateEvent('event')}
-        />
-        
-        <CreateOption 
-          icon={<CakeIcon className="h-8 w-8 text-white" />} 
-          label="Cumpleaños" 
-          color="bg-gradient-to-br from-accent-600 to-accent-700 text-white"
-          onClick={() => handleCreateEvent('birthday')}
-        />
-        
-        <CreateOption 
-          icon={<FileText className="h-8 w-8 text-white" />} 
-          label="Tarea" 
-          color="bg-gradient-to-br from-yellow-600 to-yellow-700 text-white"
-          onClick={() => handleCreateEvent('task')}
-        />
-
-        <CreateOption
-          icon={<FileText className="h-8 w-8" />}
-          label="Blog"
-          color="bg-primary-50 dark:bg-primary-900/20"
-          onClick={() => setSelectedType('blog')}
-        />
+    <div className="max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 text-primary-700 dark:text-primary-300 text-center">¿Qué deseas crear?</h1>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+        <CreateOption icon={<PlusSquare className="w-8 h-8" />} label="Publicación" color="bg-primary-100 dark:bg-primary-900" onClick={() => setSelectedType('post')} />
+        <CreateOption icon={<Calendar className="w-8 h-8" />} label="Evento" color="bg-blue-100 dark:bg-blue-900" onClick={() => setSelectedType('event')} />
+        <CreateOption icon={<CakeIcon className="w-8 h-8" />} label="Cumpleaños" color="bg-pink-100 dark:bg-pink-900" onClick={() => setSelectedType('birthday')} />
+        <CreateOption icon={<FileText className="w-8 h-8" />} label="Blog" color="bg-yellow-100 dark:bg-yellow-900" onClick={() => setSelectedType('blog')} />
+        <CreateOption icon={<PlusSquare className="w-8 h-8" />} label="Tarea" color="bg-green-100 dark:bg-green-900" onClick={() => setSelectedType('task')} />
       </div>
     </div>
   );

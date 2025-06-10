@@ -31,7 +31,7 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
   };
 
   return (
-    <div className="flex flex-col h-full p-4 gap-6 bg-white dark:bg-gray-900">
+    <div className="hidden lg:block flex flex-col h-full p-4 gap-6 bg-white dark:bg-gray-900">
       {/* Logo */}
       {/* Se eliminó la palabra VientoSur */}
       {/* Menú */}

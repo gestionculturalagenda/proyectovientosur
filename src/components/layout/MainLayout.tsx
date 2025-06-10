@@ -15,7 +15,7 @@ const MainLayout: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header general visible en móvil y escritorio */}
-      <Header onOpenConversations={() => setShowConversations(true)} />
+      <Header />
       <div className="flex flex-1 gap-0 sm:gap-2 md:gap-4 max-w-full mx-auto w-full overflow-x-hidden">
         {/* Sidebar izquierdo */}
         <aside

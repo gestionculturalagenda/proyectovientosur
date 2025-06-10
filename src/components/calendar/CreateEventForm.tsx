@@ -59,10 +59,10 @@ const eventSchema = z.object({
 type EventSchema = z.infer<typeof eventSchema>;
 
 interface CreateEventFormProps {
-  date: Date;
   onSuccess: () => void;
   onCancel: () => void;
-  initialData?: Partial<EventSchema> & { id?: string };
+  date?: Date;
+  initialData?: any;
 }
 
 interface EventData {
@@ -103,13 +103,13 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ date, onSuccess, onCa
     resolver: zodResolver(eventSchema),
     defaultValues: initialData ? {
       ...initialData,
-      date: initialData.date || date.toISOString().split('T')[0],
+      date: initialData.date || date?.toISOString().split('T')[0],
       cost: initialData.cost || { type: 'free' },
       technical_requirements: initialData.technical_requirements || [],
       tags: initialData.tags || [],
       recurrence: initialData.recurrence || { type: 'none' }
     } : {
-      date: date.toISOString().split('T')[0],
+      date: date?.toISOString().split('T')[0],
       cost: { type: 'free' },
       technical_requirements: [],
       tags: [],
@@ -121,7 +121,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ date, onSuccess, onCa
     if (initialData) {
       reset({
         ...initialData,
-        date: initialData.date || date.toISOString().split('T')[0],
+        date: initialData.date || date?.toISOString().split('T')[0],
         cost: initialData.cost || { type: 'free' },
         technical_requirements: initialData.technical_requirements || [],
         tags: initialData.tags || [],
@@ -158,7 +158,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ date, onSuccess, onCa
     return urlData.publicUrl;
   };
 
-  const handleImageChange = async (file: File | undefined) => {
+  const handleImageChange = async (file: File | null) => {
     setImageSelected(!!file);
     if (!file) {
       setValue('image_url', undefined);

@@ -5,12 +5,13 @@ import ThemeToggle from '../ui/ThemeToggle';
 import { UserSearch } from '../profile/UserSearch';
 import { useNavigate } from 'react-router-dom';
 import ConversationModal from './ConversationModal';
+import MobileDrawerMenu from './MobileDrawerMenu';
 
 const Header = () => {
   const { user, logout } = useAuthStore();
   const [showMenu, setShowMenu] = useState(false);
   const [showProfileSearch, setShowProfileSearch] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [showConversationModal, setShowConversationModal] = useState(false);
   const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ const Header = () => {
       {/* Menú hamburguesa solo en móvil */}
       <button
         className="lg:hidden p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-800 mr-2"
-        onClick={() => setMobileMenuOpen((v) => !v)}
+        onClick={() => setDrawerOpen(true)}
         aria-label="Abrir menú"
       >
         <HiOutlineMenu size={26} className="text-blue-600 dark:text-blue-300" />
@@ -103,19 +104,7 @@ const Header = () => {
           )}
         </div>
       </nav>
-      {/* Menú lateral móvil (drawer) */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black bg-opacity-40" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="relative w-64 max-w-full h-full bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col animate-fade-in border-r border-gray-100 dark:border-gray-800">
-            {/* Aquí puedes renderizar el menú lateral, links, perfil, etc. */}
-            <button className="self-end m-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setMobileMenuOpen(false)} aria-label="Cerrar menú">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-            {/* ...aquí puedes poner navegación, perfil, etc... */}
-          </aside>
-        </div>
-      )}
+      <MobileDrawerMenu open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       {/* Modal de conversaciones */}
       <div className="fixed top-0 right-0 z-50">
         <ConversationModal open={showConversationModal} onClose={() => setShowConversationModal(false)} />

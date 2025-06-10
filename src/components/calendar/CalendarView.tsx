@@ -137,7 +137,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ onSelectDate, selectedDate 
               {/* Event indicators (limited to 3) */}
               {dayEvents.length > 0 && (
                 <div className="mt-auto">
-                  {dayEvents.slice(0, 3).map((event, index) => (
+                  {dayEvents.slice(0, 3).map((event) => (
                     <div 
                       key={event.id}
                       className={`h-1.5 rounded-full my-0.5 ${getEventTypeColor(event.type)}`}

@@ -8,6 +8,7 @@ import { useAuthStore } from '../store/authStore';
 import { toast } from 'sonner';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
+import SuggestionsToFollow from '../components/profile/SuggestionsToFollow';
 
 interface BlogPost {
   id: string;
@@ -51,17 +52,11 @@ const BlogsPage: React.FC = () => {
     const fetchBlogs = async () => {
       setIsLoading(true);
       // Traer solo publicaciones tipo 'blog' y ajustar el select a la estructura real
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('publicaciones')
         .select(`id, titulo, excerpt, imagen_portada, categoria, publicado_en, autor_id`)
         .eq('tipo', 'blog')
         .order('publicado_en', { ascending: false });
-      if (error) {
-        setBlogs([]);
-        setIsLoading(false);
-        toast.error('Error al cargar los blogs');
-        return;
-      }
       // Obtener datos de autor para cada blog
       const blogsWithAuthors = await Promise.all((data || []).map(async (b: any) => {
         let autor = { nombre_completo: 'Autor', avatar_url: '/default-avatar.png', id: '', nombre_usuario: '' };
@@ -122,7 +117,7 @@ const BlogsPage: React.FC = () => {
       return;
     }
     setLoadingComments(blogId);
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('comentarios_blog')
       .select('id, contenido, creado_en, autor:usuarios(id, nombre_completo, avatar_url)')
       .eq('publicacion_id', blogId)
@@ -229,12 +224,8 @@ const BlogsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 min-h-screen bg-gradient-to-b from-primary-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900" role="main" aria-label="Listado de blogs">
-      {/* Header visual atractivo */}
-      <header className="py-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-primary-700 dark:text-primary-300 drop-shadow-sm mb-2">Blogs culturales</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">Descubre artículos, historias y novedades de la comunidad</p>
-      </header>
+    <div className="max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24">
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 text-primary-700 dark:text-primary-300 text-center">Blogs</h1>
       {/* Selector Feed/Timeline para blogs */}
       <div className="flex justify-center gap-4 my-4">
         {FEED_MODES.map((mode) => (
@@ -248,6 +239,11 @@ const BlogsPage: React.FC = () => {
             {mode.label}
           </button>
         ))}
+      </div>
+      {/* Sugerencias de seguidores solo en móvil */}
+      <div className="block sm:hidden mb-4">
+        {/** Sugerencias para seguir */}
+        <SuggestionsToFollow />
       </div>
       {/* Categories */}
       <nav className="flex overflow-x-auto pb-2 hide-scrollbar" aria-label="Categorías de blogs">

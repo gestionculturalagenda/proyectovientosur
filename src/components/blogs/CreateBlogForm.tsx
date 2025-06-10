@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 
 interface CreateBlogFormProps {
   onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 const CATEGORIES = [

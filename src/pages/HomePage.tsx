@@ -78,23 +78,32 @@ const HomePage = () => {
     : unifiedFeed.slice().sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-full sm:max-w-2xl mx-auto px-1 sm:px-0 pb-24">
       {/* Stories Circles en la parte superior */}
-      <StoriesPage />
+      <div className="block sm:block md:block lg:hidden">
+        <StoriesPage />
+      </div>
       {/* Formulario para crear post */}
-      <CreatePostForm onSuccess={() => {
-        setTimeout(() => {
-          const firstPost = document.querySelector('.feed-item');
-          if (firstPost) firstPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-      }} />
-      {/* Sugerencias de perfiles a seguir debajo del textarea */}
-      <SuggestionsToFollow />
-
+      <div className="rounded-lg bg-white dark:bg-gray-900 shadow-sm p-2 sm:p-4 mb-2">
+        <CreatePostForm onSuccess={() => {
+          setTimeout(() => {
+            const firstPost = document.querySelector('.feed-item');
+            if (firstPost) firstPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }} />
+      </div>
+      {/* Sugerencias de perfiles a seguir debajo del textarea, solo móvil */}
+      <div className="block sm:hidden mb-2">
+        <SuggestionsToFollow />
+      </div>
+      {/* Sugerencias de perfiles a seguir en escritorio */}
+      <div className="hidden sm:block">
+        <SuggestionsToFollow />
+      </div>
       {/* Modal de edición de evento */}
       {editingEvent && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 w-full max-w-lg relative">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 w-full max-w-lg relative animate-fade-in">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"
               onClick={() => setEditingEvent(null)}
@@ -136,13 +145,12 @@ const HomePage = () => {
           </div>
         </div>
       )}
-
       {/* Selector Feed/Timeline */}
-      <div className="flex justify-center gap-4 my-4">
+      <div className="flex justify-center gap-2 my-2 sm:my-4">
         {FEED_MODES.map((mode) => (
           <button
             key={mode.value}
-            className={`px-4 py-2 rounded-full font-semibold transition-colors duration-150 ${feedMode === mode.value ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}
+            className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full font-semibold transition-colors duration-150 text-xs sm:text-base ${feedMode === mode.value ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}
             onClick={() => setFeedMode(mode.value as 'feed' | 'timeline')}
             aria-pressed={feedMode === mode.value}
           >
@@ -150,7 +158,6 @@ const HomePage = () => {
           </button>
         ))}
       </div>
-
       {/* Feed unificado */}
       {(isLoadingPosts || isLoadingEvents) ? (
         <div>
@@ -162,13 +169,13 @@ const HomePage = () => {
           <p className="text-sm text-gray-400">¡Crea tu primera publicación, evento o cumpleaños para comenzar!</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2 sm:space-y-4">
           {sortedFeed.map((item) => {
             if (item.type === 'post' && 'post' in item) {
-              return <PostCard key={item.post.id} post={item.post} onDeleted={() => setLocalPosts((prev) => prev.filter((p) => p.id !== item.post.id))} />;
+              return <div className="feed-item"><PostCard key={item.post.id} post={item.post} onDeleted={() => setLocalPosts((prev) => prev.filter((p) => p.id !== item.post.id))} /></div>;
             }
             if (item.type === 'event' && 'event' in item) {
-              return <EventoCulturalCard key={item.event.id} event={{
+              return <div className="feed-item"><EventoCulturalCard key={item.event.id} event={{
                 id: item.event.id,
                 titulo: item.event.title,
                 descripcion: item.event.description,
@@ -184,10 +191,10 @@ const HomePage = () => {
                   technical_requirements: item.event.metadata?.technical_requirements || [],
                   tags: item.event.metadata?.tags || [],
                 }
-              }} onEdit={() => setEditingEvent(item.event)} onDeleted={() => setLocalEvents((prev) => prev.filter((e) => e.id !== item.event.id))} />;
+              }} onEdit={() => setEditingEvent(item.event)} onDeleted={() => setLocalEvents((prev) => prev.filter((e) => e.id !== item.event.id))} /></div>;
             }
             if (item.type === 'birthday' && 'birthday' in item) {
-              return <div key={item.birthday.id} className="card">Cumpleaños: {item.birthday.name}</div>;
+              return <div key={item.birthday.id} className="card feed-item">Cumpleaños: {item.birthday.name}</div>;
             }
             return null;
           })}

@@ -1,1 +1,0 @@
-import{r as i,j as s,E as r,g as o}from"./index-CSAYQrjP.js";const n=()=>{const[t,e]=i.useState(!1);return s.jsx("div",{children:t?s.jsx(r,{onCancel:()=>e(!1)}):s.jsx(o,{onEdit:()=>e(!0)})})};export{n as default};

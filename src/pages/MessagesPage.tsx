@@ -68,7 +68,7 @@ export default function MessagesPage() {
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [showChat, setShowChat] = useState(false);
   const [showActionsModal, setShowActionsModal] = useState(false);
-  const isMobile = window.innerWidth < 768;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // --- 
   // NUEVO: Consulta real de grupos y miembros desde Supabase
@@ -364,17 +364,17 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 flex gap-8 md:flex-row flex-col">
+    <div className="max-w-4xl mx-auto p-1 sm:p-4 flex gap-0 md:gap-8 md:flex-row flex-col h-[80vh]">
       {/* Lista de conversaciones */}
-      <div className={`md:w-1/3 border-r pr-4 md:block ${isMobile && showChat ? 'hidden' : 'block'} bg-white dark:bg-gray-900`}> 
-        <h3 className="font-bold mb-4">Conversaciones</h3>
-        {convLoading ? <div>Cargando...</div> : (
-          <ul className="space-y-2">
+      <div className={`md:w-1/3 border-r pr-0 md:pr-4 md:block ${isMobile && showChat ? 'hidden' : 'block'} bg-white dark:bg-gray-900 min-h-[60vh] max-h-[80vh] overflow-y-auto rounded-lg md:rounded-none shadow-sm md:shadow-none`}>
+        <h3 className="font-bold mb-2 sm:mb-4 text-base sm:text-lg px-2 pt-2">Conversaciones</h3>
+        {convLoading ? <div className="p-4">Cargando...</div> : (
+          <ul className="space-y-1 sm:space-y-2">
             {conversations.map(conv => (
               <li key={conv.group_id || conv.user_id}>
                 <Link
                   to={conv.is_group ? `?group=${conv.group_id}` : `?to=${conv.user_id}`}
-                  className={`flex items-center gap-3 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-gray-800 ${receiverId === conv.user_id || groupId === conv.group_id ? 'bg-primary-100 dark:bg-gray-900' : ''}`}
+                  className={`flex items-center gap-3 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-gray-800 transition-all ${receiverId === conv.user_id || groupId === conv.group_id ? 'bg-primary-100 dark:bg-gray-900' : ''}`}
                   onClick={() => { if (isMobile) setShowChat(true); }}
                 >
                   {conv.is_group ? (
@@ -388,29 +388,29 @@ export default function MessagesPage() {
                           <span className="w-6 h-6 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white -ml-2">+{conv.group_members.length - 3}</span>
                         )}
                       </div>
-                      <div className="flex-1">
-                        <div className="font-medium">{conv.group_name}</div>
-                        <div className="text-xs text-gray-500 truncate max-w-[180px]">{conv.last_message}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate">{conv.group_name}</div>
+                        <div className="text-xs text-gray-500 truncate max-w-[120px]">{conv.last_message}</div>
                       </div>
                     </>
                   ) : (
                     <>
                       <img src={conv.avatar_url} alt={conv.username} className="w-10 h-10 rounded-full" />
-                      <div className="flex-1">
-                        <div className="font-medium">@{conv.username}</div>
-                        <div className="text-xs text-gray-500 truncate max-w-[180px]">{conv.last_message}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate">@{conv.username}</div>
+                        <div className="text-xs text-gray-500 truncate max-w-[120px]">{conv.last_message}</div>
                       </div>
                     </>
                   )}
                 </Link>
               </li>
             ))}
-            {conversations.length === 0 && <li className="text-gray-400">No hay conversaciones.</li>}
+            {conversations.length === 0 && <li className="text-gray-400 text-center py-8">No hay conversaciones.</li>}
           </ul>
         )}
       </div>
       {/* Chat actual */}
-      <div className={`flex-1 ${isMobile && !showChat ? 'hidden' : 'block'}`}> 
+      <div className={`flex-1 ${isMobile && !showChat ? 'hidden' : 'block'} h-full`}> 
         {(receiverId || groupId) ? (
           <>
             {/* Botón volver en móvil */}
@@ -593,7 +593,7 @@ export default function MessagesPage() {
             </form>
           </>
         ) : (
-          <div className="p-8 text-gray-400 text-center">Selecciona una conversación para comenzar a chatear.</div>
+          <div className="flex-1 flex items-center justify-center text-gray-400 text-center px-2">Selecciona una conversación para comenzar a chatear.</div>
         )}
       </div>
     </div>

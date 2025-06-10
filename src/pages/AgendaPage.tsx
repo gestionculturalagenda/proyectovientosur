@@ -78,13 +78,13 @@ const AgendaPage: React.FC = () => {
   };
 
   return (
-    <main className="p-4 max-w-3xl mx-auto min-h-screen bg-gradient-to-b from-primary-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
-      <header className="py-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-primary-700 dark:text-primary-300 drop-shadow-sm mb-2">Agenda cultural</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-lg">Consulta y programa eventos, cumpleaños y tareas de la comunidad</p>
+    <main className="p-2 sm:p-4 max-w-full sm:max-w-3xl mx-auto min-h-screen bg-gradient-to-b from-primary-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 pb-24">
+      <header className="py-4 sm:py-8 text-center">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-primary-700 dark:text-primary-300 drop-shadow-sm mb-2">Agenda cultural</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg">Consulta y programa eventos, cumpleaños y tareas de la comunidad</p>
       </header>
-      <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between">
-        <div className="flex-1 flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-2 sm:gap-4 mb-4 sm:mb-8 items-center justify-between">
+        <div className="flex-1 flex flex-col md:flex-row gap-2 sm:gap-4 w-full">
           <div className="relative w-full md:w-1/2">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Search className="h-5 w-5" />
@@ -94,7 +94,7 @@ const AgendaPage: React.FC = () => {
               placeholder="Buscar evento..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-10 pr-3 py-2 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full transition shadow-sm text-base"
+              className="pl-10 pr-3 py-2 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full transition shadow-sm text-sm sm:text-base"
               aria-label="Buscar evento"
             />
           </div>
@@ -103,7 +103,7 @@ const AgendaPage: React.FC = () => {
               type="date"
               value={filterDate}
               onChange={e => setFilterDate(e.target.value)}
-              className="px-3 py-2 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full transition shadow-sm text-base"
+              className="px-3 py-2 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full transition shadow-sm text-sm sm:text-base"
               aria-label="Filtrar por fecha"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
@@ -111,10 +111,10 @@ const AgendaPage: React.FC = () => {
             </span>
           </div>
         </div>
-        <div className="mt-4 md:mt-0">
+        <div className="mt-2 sm:mt-4 md:mt-0 w-full md:w-auto flex justify-end">
           <button
             onClick={() => window.location.href = '/calendar'}
-            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary-600 text-white font-semibold shadow-lg hover:bg-primary-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 rounded-full bg-primary-600 text-white font-semibold shadow-lg hover:bg-primary-700 transition focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm sm:text-base"
             aria-label="Programar evento"
           >
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 5v14m7-7H5"/></svg>
@@ -122,17 +122,17 @@ const AgendaPage: React.FC = () => {
           </button>
         </div>
       </div>
-      <section aria-labelledby="feed" className="mb-12">
-        <h2 id="feed" className="text-2xl font-bold mb-6 text-primary-700 dark:text-primary-300">Próximos eventos y cumpleaños</h2>
+      <section aria-labelledby="feed" className="mb-8 sm:mb-12">
+        <h2 id="feed" className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-primary-700 dark:text-primary-300">Próximos eventos y cumpleaños</h2>
         {loadingEventos || loadingCumpleanos ? (
-          <div className="text-center text-lg text-gray-500 py-8">Cargando...</div>
+          <div className="text-center text-base sm:text-lg text-gray-500 py-8">Cargando...</div>
         ) : feed.length === 0 ? (
           <div className="text-center text-gray-400 py-8">No hay eventos ni cumpleaños próximos.</div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-3 sm:space-y-6">
             {feed.map(item =>
               item.__type === 'cumple' ? (
-                <div className="shadow-lg rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-0" key={item.id}>
+                <div className="shadow rounded-lg sm:rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-0" key={item.id}>
                   <CumpleañosCard
                     birthday={item}
                     onDeleted={() => setCumpleanos(prev => prev.filter(c => c.id !== item.id))}
@@ -140,7 +140,7 @@ const AgendaPage: React.FC = () => {
                   />
                 </div>
               ) : (
-                <div className="shadow-lg rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-0" key={item.id}>
+                <div className="shadow rounded-lg sm:rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-0" key={item.id}>
                   <EventoCulturalCard
                     event={item}
                     onDeleted={() => setEventos(prev => prev.filter(e => e.id !== item.id))}
@@ -153,8 +153,8 @@ const AgendaPage: React.FC = () => {
         )}
       </section>
       <section aria-labelledby="tareas" className="mb-8">
-        <h2 id="tareas" className="text-2xl font-bold mb-6 text-primary-700 dark:text-primary-300">Tareas</h2>
-        <div className="shadow-lg rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-4">
+        <h2 id="tareas" className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-primary-700 dark:text-primary-300">Tareas</h2>
+        <div className="shadow rounded-lg sm:rounded-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-2 sm:p-4">
           <TareaCulturalKanban />
         </div>
       </section>

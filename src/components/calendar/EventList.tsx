@@ -4,7 +4,6 @@ import { Calendar, CheckSquare, Cake, Clock, MapPin } from 'lucide-react';
 import { 
   Event, 
   EventType, 
-  formatEventDate, 
   formatEventTime, 
   useEventStore 
 } from '../../store/eventStore';
@@ -37,7 +36,7 @@ const getEventTypeLabel = (type: EventType) => {
 };
 
 const EventList: React.FC<EventListProps> = ({ date, onCreateEvent }) => {
-  const { events, getEventsByDate } = useEventStore();
+  const { getEventsByDate } = useEventStore();
   const eventsForDay = getEventsByDate(date);
   
   return (

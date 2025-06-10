@@ -36,13 +36,13 @@ const RightSidebar: React.FC = () => {
 		.slice(0, 5);
 
 	// Handler para seleccionar usuario (puedes personalizar la acción)
-	const handleSelectUser = (userId: string, userName: string, userAvatar: string) => {
+	const handleSelectUser = () => {
 		// Aquí puedes manejar la selección de usuario/conversación
 		setShowConversations(false);
 	};
 
 	return (
-		<div className="flex flex-col h-full p-4 gap-6 bg-white dark:bg-gray-900 relative">
+		<div className="flex flex-col h-full p-4 gap-6 bg-white dark:bg-gray-900 relative hidden lg:block">
 			{/* Usuarios en línea */}
 			<div className="rounded-lg shadow-md p-4 bg-white dark:bg-gray-800">
 				<div className="font-semibold mb-2 text-gray-700 dark:text-gray-100 flex items-center gap-2">

@@ -17,16 +17,18 @@ const BottomNavigation: React.FC = () => {
   ];
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30">
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-30 lg:hidden">
       <div className="container mx-auto max-w-2xl">
         <div className="grid grid-cols-5 items-center h-16">
-          {navItems.map(({ path, icon: Icon, label }) => {
+          {navItems.map(({ path, icon: Icon, label }, idx) => {
             const isActive = location.pathname === path;
+            const isCenter = idx === 2;
             return (
               <NavLink
                 key={path}
                 to={path}
-                className={`bottom-tab relative h-full flex items-center justify-center`}
+                className={`bottom-tab relative h-full flex items-center justify-center ${isCenter ? 'z-10' : ''}`}
+                style={isCenter ? { marginTop: '-18px' } : {}}
               >
                 {isActive && (
                   <motion.div
@@ -35,15 +37,9 @@ const BottomNavigation: React.FC = () => {
                     transition={{ duration: 0.2 }}
                   />
                 )}
-                <div className="flex flex-col items-center">
-                  <Icon 
-                    className={`bottom-tab-icon ${isActive ? 'text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400'}`} 
-                  />
-                  <span 
-                    className={`text-xs ${isActive ? 'font-medium text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400'}`}
-                  >
-                    {label}
-                  </span>
+                <div className={`flex flex-col items-center ${isCenter ? 'rounded-full bg-blue-600 text-white shadow-lg p-3 scale-110' : ''}`}>
+                  <Icon className={`bottom-tab-icon ${isActive ? 'text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400'} ${isCenter ? 'text-white' : ''}`} />
+                  <span className={`text-xs ${isActive ? 'font-medium text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400'} ${isCenter ? 'text-white' : ''}`}>{label}</span>
                 </div>
               </NavLink>
             );
