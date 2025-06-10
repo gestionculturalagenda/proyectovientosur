@@ -11,6 +11,7 @@ export interface Post {
   type: PostType;
   content: string;
   mediaUrl?: string;
+  mediaUrls?: Array<{ url: string; type: string; name: string }>;
   createdAt: string;
   likes: string[];
   comments: Comment[];
@@ -66,12 +67,26 @@ export const usePostStore = create<PostState>((set, get) => ({
           .eq('post_id', post.id)
           .single();
 
+        // Soporte para media_urls enriquecido
+        let mediaUrls: Array<{ url: string; type: string; name: string }> = [];
+        if (post.media_urls) {
+          try {
+            mediaUrls = typeof post.media_urls === 'string' ? JSON.parse(post.media_urls) : post.media_urls;
+          } catch {
+            mediaUrls = [];
+          }
+        } else if (post.multimedia_url && Array.isArray(post.multimedia_url)) {
+          // Fallback retrocompatible: solo url plano, tipo image
+          mediaUrls = post.multimedia_url.map((url: string) => ({ url, type: 'image', name: '' }));
+        }
+
         return {
           id: post.id,
           userId: post.autor_id,
           type: post.tipo,
           content: post.contenido,
           mediaUrl: post.multimedia_url?.[0],
+          mediaUrls,
           createdAt: post.creado_en,
           likes: post.reacciones.map((r: any) => r.usuario_id),
           comments: post.comentarios.map((c: any) => ({
@@ -97,11 +112,12 @@ export const usePostStore = create<PostState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const now = new Date().toISOString();
-      const insertData = {
+      const insertData: any = {
         autor_id: post.userId,
         tipo: post.type,
         contenido: post.content,
-        multimedia_url: post.mediaUrl ? [post.mediaUrl] : [],
+        multimedia_url: post.mediaUrls ? post.mediaUrls.map(m => m.url) : (post.mediaUrl ? [post.mediaUrl] : []),
+        media_urls: post.mediaUrls ? JSON.stringify(post.mediaUrls) : null,
         creado_en: now,
         actualizado_en: now
       };
@@ -113,12 +129,25 @@ export const usePostStore = create<PostState>((set, get) => ({
 
       if (error) throw error;
 
+      // Soporte para media_urls enriquecido
+      let mediaUrls: Array<{ url: string; type: string; name: string }> = [];
+      if (data.media_urls) {
+        try {
+          mediaUrls = typeof data.media_urls === 'string' ? JSON.parse(data.media_urls) : data.media_urls;
+        } catch {
+          mediaUrls = [];
+        }
+      } else if (data.multimedia_url && Array.isArray(data.multimedia_url)) {
+        mediaUrls = data.multimedia_url.map((url: string) => ({ url, type: 'image', name: '' }));
+      }
+
       const newPost: Post = {
         id: data.id,
         userId: data.autor_id,
         type: data.tipo,
         content: data.contenido,
         mediaUrl: data.multimedia_url?.[0],
+        mediaUrls,
         createdAt: data.creado_en,
         likes: [],
         comments: [],

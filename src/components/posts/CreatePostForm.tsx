@@ -36,7 +36,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
   const { user } = useAuthStore();
   const { addPost } = usePostStore();
 
-  // Limpiar estados tras publicar
+  // Cambia el submit para enviar todos los archivos
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -53,7 +53,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
         userId: user.id,
         type: postType,
         content: content.trim(),
-        mediaUrls: mediaUrls.length > 0 ? mediaUrls : undefined, // Cambia a mediaUrls
+        mediaUrls: mediaUrls.length > 0 ? mediaUrls : undefined, // Ahora es array
         isFavorite: false
       });
       setContent('');
@@ -192,6 +192,25 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
     setShowPreviewModal(false);
     setPreviewFiles([]);
     setModalText('');
+  };
+
+  // Reordenamiento drag & drop en el modal de previsualización
+  const handleDragStart = (idx: number) => (e: React.DragEvent) => {
+    e.dataTransfer.setData('drag-idx', idx.toString());
+  };
+  const handleDrop = (idx: number) => (e: React.DragEvent) => {
+    e.preventDefault();
+    const fromIdx = parseInt(e.dataTransfer.getData('drag-idx'));
+    if (fromIdx === idx) return;
+    setPreviewFiles(prev => {
+      const files = [...prev];
+      const [removed] = files.splice(fromIdx, 1);
+      files.splice(idx, 0, removed);
+      return files;
+    });
+  };
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
   };
 
   return (
@@ -365,12 +384,12 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
               <h3 className="text-lg font-bold mb-2">Previsualización de archivos</h3>
               <div className="w-full flex flex-wrap gap-3 items-center justify-center">
                 {previewFiles.map((file, idx) => (
-                  <div key={file.url} className="relative group">
+                  <div key={file.url} className="relative group" draggable onDragStart={handleDragStart(idx)} onDrop={handleDrop(idx)} onDragOver={handleDragOver}>
                     {file.type === 'image' && (
-                      <img src={file.url} alt="Previsualización" className="rounded-lg max-h-32 max-w-[120px] object-contain border" />
+                      <img src={file.url} alt="Previsualización" className="rounded-lg max-h-32 max-w-[120px] object-contain border cursor-move" />
                     )}
                     {file.type === 'video' && (
-                      <video src={file.url} controls className="rounded-lg max-h-32 max-w-[120px] object-contain border" />
+                      <video src={file.url} controls className="rounded-lg max-h-32 max-w-[120px] object-contain border cursor-move" />
                     )}
                     {file.type === 'audio' && (
                       <audio src={file.url} controls className="w-28" />

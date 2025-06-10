@@ -274,29 +274,55 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
       )}
       
       {/* Post Media */}
-      {post.mediaUrl && post.type === 'image' && (
-        <div className="relative pb-3 flex justify-center">
-          <img 
-            src={post.mediaUrl} 
-            alt="Post media" 
-            className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-full max-h-[350px] object-contain shadow-sm hover:shadow-md transition-shadow duration-200"
-          />
+      {(Array.isArray((post as any).mediaUrls) && (post as any).mediaUrls.length > 0) ? (
+        <div className="relative pb-3 flex flex-wrap gap-2 justify-center">
+          {(post as any).mediaUrls.map((media: {url: string, type: string, name?: string}, idx: number) => (
+            <React.Fragment key={media.url}>
+              {media.type === 'image' && (
+                <img src={media.url} alt={`Imagen ${idx + 1}`} className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-[180px] max-h-[220px] object-contain shadow-sm hover:shadow-md transition-shadow duration-200" />
+              )}
+              {media.type === 'video' && (
+                <video src={media.url} controls className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-[220px] max-h-[220px] object-contain shadow-sm" />
+              )}
+              {media.type === 'audio' && (
+                <audio src={media.url} controls className="w-full" />
+              )}
+              {media.type === 'document' && (
+                <div className="flex items-center">
+                  <a href={media.url} target="_blank" rel="noopener noreferrer" className="text-primary-600 underline">Ver documento {media.name || ''}</a>
+                </div>
+              )}
+            </React.Fragment>
+          ))}
         </div>
-      )}
-      {post.mediaUrl && post.type === 'video' && (
-        <div className="relative pb-3 flex justify-center">
-          <video src={post.mediaUrl} controls className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-full max-h-[350px] object-contain shadow-sm" />
-        </div>
-      )}
-      {post.mediaUrl && post.type === 'audio' && (
-        <div className="relative pb-3 flex items-center">
-          <audio src={post.mediaUrl} controls className="w-full" />
-        </div>
-      )}
-      {post.mediaUrl && post.type === 'document' && (
-        <div className="relative pb-3 flex items-center">
-          <a href={post.mediaUrl} target="_blank" rel="noopener noreferrer" className="text-primary-600 underline">Ver documento</a>
-        </div>
+      ) : (
+        // Soporte retrocompatibilidad mediaUrl único
+        <>
+          {post.mediaUrl && post.type === 'image' && (
+            <div className="relative pb-3 flex justify-center">
+              <img 
+                src={post.mediaUrl} 
+                alt="Post media" 
+                className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-full max-h-[350px] object-contain shadow-sm hover:shadow-md transition-shadow duration-200"
+              />
+            </div>
+          )}
+          {post.mediaUrl && post.type === 'video' && (
+            <div className="relative pb-3 flex justify-center">
+              <video src={post.mediaUrl} controls className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-full max-h-[350px] object-contain shadow-sm" />
+            </div>
+          )}
+          {post.mediaUrl && post.type === 'audio' && (
+            <div className="relative pb-3 flex items-center">
+              <audio src={post.mediaUrl} controls className="w-full" />
+            </div>
+          )}
+          {post.mediaUrl && post.type === 'document' && (
+            <div className="relative pb-3 flex items-center">
+              <a href={post.mediaUrl} target="_blank" rel="noopener noreferrer" className="text-primary-600 underline">Ver documento</a>
+            </div>
+          )}
+        </>
       )}
       
       {/* Post Actions */}
