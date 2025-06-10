@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { HiOutlineSearch, HiOutlineBell, HiOutlineMenu } from 'react-icons/hi';
+import { HiOutlineSearch, HiOutlineMenu } from 'react-icons/hi';
 import { useAuthStore } from '../../store/authStore';
 import ThemeToggle from '../ui/ThemeToggle';
 import { UserSearch } from '../profile/UserSearch';
 import { useNavigate } from 'react-router-dom';
 import ConversationModal from './ConversationModal';
 import MobileDrawerMenu from './MobileDrawerMenu';
+import NotificationCenter from '../ui/NotificationCenter';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const Header = () => {
   const { user, logout } = useAuthStore();
+  const { notifications, markAsRead } = useNotifications();
   const [showMenu, setShowMenu] = useState(false);
   const [showProfileSearch, setShowProfileSearch] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -55,12 +58,7 @@ const Header = () => {
           </button>
         </div>
         {/* Notificaciones */}
-        <button
-          className="p-2 rounded-full hover:bg-gray-100 transition"
-          aria-label="Notificaciones"
-        >
-          <HiOutlineBell size={22} />
-        </button>
+        <NotificationCenter notifications={notifications} onMarkAsRead={markAsRead} />
         {/* Mensajes */}
         <button
           className="p-2 rounded-full hover:bg-gray-100 transition"

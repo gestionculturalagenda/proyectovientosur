@@ -80,7 +80,7 @@ const HomePage = () => {
   return (
     <div className="space-y-4 max-w-full sm:max-w-2xl mx-auto px-1 sm:px-0 pb-24">
       {/* Stories Circles en la parte superior */}
-      <div className="block sm:block md:block lg:hidden">
+      <div className="mb-2">
         <StoriesPage />
       </div>
       {/* Formulario para crear post */}
