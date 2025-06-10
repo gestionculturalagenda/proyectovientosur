@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import AudioRecorder from '../components/ui/AudioRecorder';
 import VideoRecorder from '../components/ui/VideoRecorder';
-import Picker from '@emoji-mart/react';
-import data from '@emoji-mart/data';
-import { Mic, Camera, Smile, Clipboard, Trash2, Reply } from 'lucide-react';
+
+// @ts-ignore
 import { AnimatePresence, motion } from 'framer-motion';
+// @ts-ignore
+import { Mic, Camera, Smile, Clipboard, Trash2, Reply } from 'lucide-react';
+// @ts-ignore
+import Picker from '@emoji-mart/react';
+// @ts-ignore
+import data from '@emoji-mart/data';
 
 interface Message {
   id: string;
@@ -44,7 +49,8 @@ interface Conversation {
 
 export default function MessagesPage() {
   const { user } = useAuthStore();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const receiverId = searchParams.get('to');
   const groupId = searchParams.get('group');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -58,7 +64,6 @@ export default function MessagesPage() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [sticker, setSticker] = useState<string | null>(null);
   const [reactionMenuMsgId, setReactionMenuMsgId] = useState<string | null>(null);
-  const [reactions, setReactions] = useState<{ [msgId: string]: string }>({});
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [showVideoRecorder, setShowVideoRecorder] = useState(false);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
@@ -73,7 +78,7 @@ export default function MessagesPage() {
   // --- 
   // NUEVO: Consulta real de grupos y miembros desde Supabase
   // Cache global de usuarios para evitar consultas repetidas
-  const userCacheRef = React.useRef<{ [key: string]: { nombre_usuario: string; avatar_url: string } }>({});
+  const userCacheRef = React.useRef<Record<string | number, { nombre_usuario: string; avatar_url: string }>>({});
 
   const fetchConversations = async () => {
     if (!user) return;
@@ -104,13 +109,15 @@ export default function MessagesPage() {
         .from('group_members')
         .select('group_id, user_id, usuarios(nombre_usuario, avatar_url)')
         .in('group_id', groupIds);
+      // Corregir acceso a gm.usuarios para miembros de grupo
       if (allGroupMembers) {
         for (const gm of allGroupMembers) {
           if (!groupMembersMap[gm.group_id]) groupMembersMap[gm.group_id] = [];
+          const usuario = Array.isArray(gm.usuarios) ? gm.usuarios[0] : gm.usuarios;
           groupMembersMap[gm.group_id].push({
             id: gm.user_id,
-            nombre_usuario: gm.usuarios?.nombre_usuario || 'Usuario',
-            avatar_url: gm.usuarios?.avatar_url || '/default-avatar.png',
+            nombre_usuario: usuario?.nombre_usuario || 'Usuario',
+            avatar_url: usuario?.avatar_url || '/default-avatar.png',
           });
         }
       }
@@ -131,14 +138,15 @@ export default function MessagesPage() {
     }
     // 5. Construir el mapa de conversaciones 1 a 1
     const userMap: { [key: string]: Conversation } = {};
+    // Ajustar acceso a userData
     for (const msg of allMsgs || []) {
       const otherId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
       if (!userMap[otherId]) {
-        const userData = userCacheRef.current[otherId] || {};
+        const userData = userCacheRef.current[otherId] || { nombre_usuario: 'Usuario', avatar_url: '/default-avatar.png' };
         userMap[otherId] = {
           user_id: otherId,
-          username: userData.nombre_usuario || 'Usuario',
-          avatar_url: userData.avatar_url || '/default-avatar.png',
+          username: userData.nombre_usuario,
+          avatar_url: userData.avatar_url,
           last_message: msg.content,
           last_time: msg.created_at,
           unread_count: 0,
@@ -295,13 +303,6 @@ export default function MessagesPage() {
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${user.id}),and(group_id.eq.${groupId})`)
       .order('created_at', { ascending: true });
     setMessages(data || []);
-  };
-
-  // Handler para agregar reacción a un mensaje
-  const handleAddReaction = (msgId: string, emoji: string) => {
-    setReactions(prev => ({ ...prev, [msgId]: emoji }));
-    setReactionMenuMsgId(null);
-    // Aquí podrías guardar la reacción en la base de datos si lo deseas
   };
 
   // Scroll automático al último mensaje
@@ -477,7 +478,15 @@ export default function MessagesPage() {
                                 <div className="text-xs text-primary-400 mb-1 border-l-2 border-primary-300 pl-2 italic">Respondiendo a: {msg.reply_to.content?.slice(0, 40)}...</div>
                               )}
                               {msg.content && <span>{msg.content}</span>}
-                              {msg.file_url && <a href={supabase.storage.from('chat-files').getPublicUrl(msg.file_url).publicURL} target="_blank" rel="noopener noreferrer" className="block text-blue-500">Archivo adjunto</a>}
+                              {msg.file_url && (
+                                (() => {
+                                  const publicUrlObj = supabase.storage.from('chat-files').getPublicUrl(msg.file_url);
+                                  const url = publicUrlObj?.data?.publicUrl || '';
+                                  return (
+                                    <a href={url} target="_blank" rel="noopener noreferrer" className="block text-blue-500">Archivo adjunto</a>
+                                  );
+                                })()
+                              }
                               {msg.audio_url && <audio controls src={msg.audio_url} className="mt-2" />}
                               {msg.video_url && <video controls src={msg.video_url} className="mt-2 max-w-xs" />}
                               {msg.sticker_url && <img src={msg.sticker_url} alt="sticker" className="h-12 mt-2" />}
@@ -500,15 +509,6 @@ export default function MessagesPage() {
                               {copiedMsgId === msg.id && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute -top-8 right-0 bg-primary-600 text-white text-xs px-2 py-1 rounded shadow">¡Copiado!</motion.div>
                               )}
-                              {/* Visualización de reacciones (múltiples, conteo) */}
-                              {reactions[msg.id] && (
-                                <div className="flex space-x-1 mt-2">
-                                  <span className="bg-white/80 dark:bg-gray-700/80 rounded-full px-2 py-0.5 text-sm flex items-center border border-gray-200 dark:border-gray-700">
-                                    {reactions[msg.id]} <span className="ml-1 text-xs">1</span>
-                                  </span>
-                                </div>
-                              )}
-                              <div className="text-xs text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                             </motion.div>
                           );
                         })}

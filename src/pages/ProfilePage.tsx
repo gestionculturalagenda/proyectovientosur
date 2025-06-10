@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ProfileView from '../components/profile/ProfileView';
 import EditProfileForm from '../components/profile/EditProfileForm';
 

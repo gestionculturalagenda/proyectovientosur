@@ -70,8 +70,10 @@ const TopBar: React.FC = () => {
           <div className="flex items-center w-1/3">
             {shouldShowBackButton ? (
               <button 
+                type="button"
                 onClick={() => navigate(-1)}
-                className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-primary-500"
+                aria-label="Volver atrás"
               >
                 <ArrowLeft className="h-5 w-5 text-gray-700 dark:text-gray-300" />
               </button>
@@ -88,7 +90,8 @@ const TopBar: React.FC = () => {
           )}
           <div className="flex items-center w-1/3 justify-end gap-2">
             <button
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+              type="button"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-primary-500"
               aria-label="Buscar usuarios"
               onClick={() => setShowUserSearch(true)}
             >
@@ -98,7 +101,8 @@ const TopBar: React.FC = () => {
               <UserSearch onSelectUser={() => setShowUserSearch(false)} />
             </Modal>
             <button
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+              type="button"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-primary-500"
               aria-label="Notificaciones"
             >
               <Bell className="h-5 w-5" />
@@ -106,8 +110,9 @@ const TopBar: React.FC = () => {
             {/* Menú moderno */}
             <div className="relative">
               <button
+                type="button"
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                aria-label="Abrir menú"
+                aria-label="Abrir menú de usuario"
                 onClick={() => setShowMenu((v) => !v)}
                 aria-haspopup="true"
                 aria-expanded={showMenu}
@@ -124,34 +129,36 @@ const TopBar: React.FC = () => {
                 >
                   <ul className="py-2">
                     <li>
-                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" onClick={() => {navigate(user ? `/profile/${user.username}` : '/profile'); setShowMenu(false);}}>
+                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" type="button" onClick={() => {navigate(user ? `/profile/${user.username}` : '/profile'); setShowMenu(false);}} aria-label="Ir a mi perfil">
                         <span className="font-medium">Mi perfil</span>
                       </button>
                     </li>
                     <li>
-                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" onClick={() => {navigate('/direct-messages'); setShowMenu(false);}}>
+                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" type="button" onClick={() => {navigate('/direct-messages'); setShowMenu(false);}} aria-label="Ir a mensajes">
                         <span className="font-medium">Mensajes</span>
                       </button>
                     </li>
                     <li>
-                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" onClick={() => {navigate('/agenda'); setShowMenu(false);}}>
+                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" type="button" onClick={() => {navigate('/agenda'); setShowMenu(false);}} aria-label="Ir a mi agenda">
                         <span className="font-medium">Mi Agenda</span>
                       </button>
                     </li>
                     <li>
-                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" onClick={() => {navigate('/calendar'); setShowMenu(false);}}>
+                      <button className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors" type="button" onClick={() => {navigate('/calendar'); setShowMenu(false);}} aria-label="Ir a calendario">
                         <span className="font-medium">Calendario</span>
                       </button>
                     </li>
                     <li className="relative">
                       <button
+                        type="button"
                         className="w-full flex items-center gap-2 px-5 py-3 hover:bg-primary-50 dark:hover:bg-gray-800 rounded-lg transition-colors justify-between"
                         onClick={() => setShowConfigSubMenu((v) => !v)}
                         aria-haspopup="true"
                         aria-expanded={showConfigSubMenu}
+                        aria-label="Abrir submenú de configuración"
                       >
                         <span className="font-medium">Configuración</span>
-                        <span className="ml-2">{showConfigSubMenu ? '▲' : '▼'}</span>
+                        <span className="ml-2">▼</span>
                       </button>
                       {showConfigSubMenu && (
                         <div className="absolute left-0 right-0 mt-2 w-full bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 animate-fade-in">

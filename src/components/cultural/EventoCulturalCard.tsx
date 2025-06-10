@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -176,9 +175,9 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
         <div className="flex space-x-2 relative">
           <button
             type="button"
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-primary-500"
             onClick={e => { e.stopPropagation(); setShowMenu((v) => !v); }}
-            aria-label="Abrir menú"
+            aria-label="Abrir menú de opciones del evento"
             data-menu="evento-menu"
           >
             <MoreHorizontal className="h-5 w-5 text-gray-500 dark:text-gray-400" />
@@ -189,31 +188,31 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
             >
               <ul className="py-2">
                 <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => {navigator.clipboard.writeText(window.location.origin + '/eventos/' + event.id); setShowMenu(false); toast.success('¡Enlace copiado!')}}>
+                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => {navigator.clipboard.writeText(window.location.origin + '/eventos/' + event.id); setShowMenu(false); toast.success('¡Enlace copiado!')}} aria-label="Copiar enlace del evento">
                     Guardar enlace
                   </button>
                 </li>
                 <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={handleShare}>
+                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={handleShare} aria-label="Compartir evento">
                     Compartir evento
                   </button>
                 </li>
                 {isCreator && (
                   <>
                     <li>
-                      <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => { setShowMenu(false); onEdit && onEdit(); }}>
+                      <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => { setShowMenu(false); onEdit && onEdit(); }} aria-label="Editar evento">
                         Editar evento
                       </button>
                     </li>
                     <li>
-                      <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-gray-800" onClick={async () => { await handleDelete(); setShowMenu(false); }}>
+                      <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-gray-800" onClick={async () => { await handleDelete(); setShowMenu(false); }} aria-label="Eliminar evento">
                         Eliminar evento
                       </button>
                     </li>
                   </>
                 )}
                 <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={e => { e.stopPropagation(); setShowMenu(false); }}>
+                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={e => { e.stopPropagation(); setShowMenu(false); }} aria-label="Cerrar menú de opciones">
                     Cancelar
                   </button>
                 </li>
@@ -240,11 +239,11 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
 
         {/* Reacciones y comentarios */}
         <div className="flex items-center space-x-6 mb-4">
-          <button onClick={handleLike} className="flex items-center space-x-1 group">
+          <button onClick={handleLike} className="flex items-center space-x-1 group focus:outline focus:ring-2 focus:ring-primary-500" aria-pressed={isLiked} aria-label={isLiked ? 'Quitar me gusta' : 'Dar me gusta'} type="button">
             <Heart className={`h-5 w-5 ${isLiked ? 'text-red-500 fill-red-500' : 'text-gray-600 dark:text-gray-400 group-hover:text-red-500'}`} />
             <span className={`text-sm ${isLiked ? 'text-red-500' : 'text-gray-600 dark:text-gray-400 group-hover:text-red-500'}`}>{likes.length}</span>
           </button>
-          <button onClick={() => setIsCommentExpanded(!isCommentExpanded)} className="flex items-center space-x-1 group">
+          <button onClick={() => setIsCommentExpanded(!isCommentExpanded)} className="flex items-center space-x-1 group focus:outline focus:ring-2 focus:ring-primary-500" aria-expanded={isCommentExpanded} aria-label={isCommentExpanded ? 'Ocultar comentarios' : 'Mostrar comentarios'} type="button">
             <MessageCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-primary-500" />
             <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-primary-500">{comments.length}</span>
           </button>
@@ -261,7 +260,7 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
                     <Link to={commentUser?.username ? `/profile/${commentUser.username}` : '#'} className="avatar w-8 h-8 block">
                       <img
                         src={commentUser?.avatar || '/default-avatar.png'}
-                        alt={commentUser?.displayName || 'Usuario'}
+                        alt={commentUser?.displayName ? `Avatar de ${commentUser.displayName}` : 'Avatar de usuario'}
                         className="avatar-img"
                       />
                     </Link>
@@ -279,7 +278,7 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
               );
             })}
             {comments.length > 2 && !isCommentExpanded && (
-              <button onClick={() => setIsCommentExpanded(true)} className="text-sm text-primary-600 dark:text-primary-400 font-medium">
+              <button onClick={() => setIsCommentExpanded(true)} className="text-sm text-primary-600 dark:text-primary-400 font-medium focus:outline focus:ring-2 focus:ring-primary-500" aria-label="Ver todos los comentarios" type="button">
                 Ver todos los comentarios
               </button>
             )}
@@ -292,7 +291,7 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
               <div className="avatar w-8 h-8">
                 <img
                   src={user.avatar}
-                  alt={user.displayName}
+                  alt={user.displayName ? `Avatar de ${user.displayName}` : 'Avatar de usuario'}
                   className="avatar-img"
                 />
               </div>
@@ -306,7 +305,8 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
               <button
                 type="submit"
                 disabled={!newComment.trim()}
-                className="p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+                className="p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 focus:outline focus:ring-2 focus:ring-primary-500"
+                aria-label="Enviar comentario"
               >
                 <Send className="h-5 w-5" />
               </button>

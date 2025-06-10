@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+// @ts-ignore
 import { AnimatePresence, motion } from 'framer-motion';
+// @ts-ignore
 import { Bell } from 'lucide-react';
 
 export interface Notification {

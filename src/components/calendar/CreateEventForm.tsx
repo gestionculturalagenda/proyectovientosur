@@ -46,8 +46,8 @@ const eventSchema = z.object({
     amount: z.number().optional()
   }),
   responsible_person: z.object({
-    name: z.string().min(3, 'El nombre es requerido'),
-    phone: z.string().min(6, 'El teléfono es requerido'),
+    name: z.string().min(3, 'El nombre es requerido').optional(),
+    phone: z.string().min(6, 'El teléfono es requerido').optional(),
     social_media: z.string().optional()
   }),
   technical_requirements: z.array(z.string()).default([]),
@@ -65,6 +65,19 @@ interface CreateEventFormProps {
   initialData?: any;
 }
 
+interface ResponsiblePerson {
+  name?: string;
+  phone?: string;
+  social_media?: string;
+}
+
+interface Recurrence {
+  type?: string;
+  interval?: number;
+  end_date?: string;
+  days_of_week?: number[];
+}
+
 interface EventData {
   creador_id: string;
   titulo: string;
@@ -78,19 +91,10 @@ interface EventData {
   precio: number;
   metadata: {
     target_audience: string;
-    responsible_person: {
-      name: string;
-      phone: string;
-      social_media?: string;
-    };
+    responsible_person: ResponsiblePerson;
     technical_requirements: string[];
     tags: string[];
-    recurrence: {
-      type: string;
-      interval?: number;
-      end_date?: string;
-      days_of_week?: number[];
-    };
+    recurrence: Recurrence;
   };
 }
 

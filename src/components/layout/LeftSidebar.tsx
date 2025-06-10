@@ -36,19 +36,19 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
       {/* Se eliminó la palabra VientoSur */}
       {/* Menú */}
       <nav className="flex flex-col gap-2">
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/')}>{menuItems[0].icon}<span>{menuItems[0].label}</span></button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/profile')}>{menuItems[1].icon}<span>{menuItems[1].label}</span></button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={onOpenConversations}>{menuItems[2].icon}<span>{menuItems[2].label}</span></button>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition focus:outline focus:ring-2 focus:ring-primary-500" onClick={() => navigate('/')} aria-label="Ir a inicio" type="button">{menuItems[0].icon}<span>{menuItems[0].label}</span></button>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition focus:outline focus:ring-2 focus:ring-primary-500" onClick={() => navigate('/profile')} aria-label="Ir a perfil" type="button">{menuItems[1].icon}<span>{menuItems[1].label}</span></button>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition focus:outline focus:ring-2 focus:ring-primary-500" onClick={onOpenConversations} aria-label="Ir a mensajes" type="button">{menuItems[2].icon}<span>{menuItems[2].label}</span></button>
         {/* Botones adicionales debajo de Mensajes */}
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/agenda')}>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition focus:outline focus:ring-2 focus:ring-primary-500" onClick={() => navigate('/agenda')} aria-label="Ir a agenda" type="button">
           <EventNote fontSize="small" />
           <span>Agenda</span>
         </button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/calendar')}>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition focus:outline focus:ring-2 focus:ring-primary-500" onClick={() => navigate('/calendar')} aria-label="Ir a calendario" type="button">
           <CalendarToday fontSize="small" />
           <span>Calendario</span>
         </button>
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition" onClick={() => navigate('/blogs')}>
+        <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-100 font-medium transition focus:outline focus:ring-2 focus:ring-primary-500" onClick={() => navigate('/blogs')} aria-label="Ir a blogs" type="button">
           <Article fontSize="small" />
           <span>Blogs</span>
         </button>
@@ -56,13 +56,13 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
       {/* Perfil */}
       <div className="rounded-lg shadow-md p-4 bg-white dark:bg-gray-800 mb-2">
         <div className="flex items-center gap-3">
-          <img src={user?.avatar || 'https://i.pravatar.cc/40'} alt="avatar" className="w-10 h-10 rounded-full" />
+          <img src={user?.avatar || 'https://i.pravatar.cc/40'} alt={user?.displayName ? `Avatar de ${user.displayName}` : user?.username ? `Avatar de ${user.username}` : 'Avatar de usuario'} className="w-10 h-10 rounded-full" />
           <div>
             <div className="font-semibold text-gray-800 dark:text-gray-100">{user?.displayName || 'Usuario'}</div>
             <div className="text-xs text-gray-500 dark:text-gray-300">@{user?.username || 'usuario'}</div>
           </div>
         </div>
-        <button className="mt-3 flex items-center gap-2 text-sm text-red-500 hover:underline" onClick={handleLogout}>
+        <button className="mt-3 flex items-center gap-2 text-sm text-red-500 hover:underline focus:outline focus:ring-2 focus:ring-primary-500" onClick={handleLogout} aria-label="Cerrar sesión" type="button">
           <FiLogOut /> Cerrar sesión
         </button>
       </div>

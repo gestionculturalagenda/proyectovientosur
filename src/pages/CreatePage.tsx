@@ -33,10 +33,6 @@ const CreatePage = () => {
   const [selectedType, setSelectedType] = useState<CreateType | null>(null);
   const navigate = useNavigate();
   
-  const handleCreateEvent = (type: 'event' | 'birthday' | 'task') => {
-    setSelectedType(type);
-  };
-  
   // Go back to options
   const handleCancel = () => {
     setSelectedType(null);

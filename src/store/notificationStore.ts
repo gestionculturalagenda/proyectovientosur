@@ -10,7 +10,7 @@ interface NotificationState {
   markAsRead: (id: string) => void;
 }
 
-export const useNotificationStore = create<NotificationState>((set, get) => ({
+export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
   fetchNotifications: async () => {
     const { user } = useAuthStore.getState();
