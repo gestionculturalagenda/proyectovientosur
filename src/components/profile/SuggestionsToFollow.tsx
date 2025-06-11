@@ -11,7 +11,7 @@ interface UserSuggestion {
 }
 
 const SuggestionsToFollow: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user, checkAuth } = useAuthStore();
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [following, setFollowing] = useState<string[]>([]);
@@ -31,12 +31,27 @@ const SuggestionsToFollow: React.FC = () => {
   }, [user]);
 
   const handleFollow = async (userId: string) => {
-    // Aquí deberías llamar a tu endpoint o función para seguir usuario
+    if (!user?.id) return;
     setFollowing((prev) => [...prev, userId]);
-    // Simulación: podrías agregar lógica real aquí
+    // Lógica real para seguir usuario en Supabase (tabla followers)
+    const { error } = await supabase
+      .from('followers')
+      .insert({ follower_id: user.id, following_id: userId });
+    if (error) {
+      setFollowing((prev) => prev.filter((id) => id !== userId));
+      // Si el error es por duplicado (ya lo sigues), también quitar la sugerencia
+      if (error.code === '23505' || (error.message && error.message.toLowerCase().includes('duplicate'))) {
+        setSuggestions((prev) => prev.filter((s) => s.id !== userId));
+      }
+      // No mostrar ningún mensaje
+    } else {
+      setSuggestions((prev) => prev.filter((s) => s.id !== userId));
+      // Refrescar usuario autenticado para actualizar contador de siguiendo
+      if (typeof checkAuth === 'function') checkAuth();
+    }
   };
 
-  if (loading) return <div className="p-4">Cargando sugerencias...</div>;
+  if (loading) return <div className="p-4">...</div>;
   if (!suggestions.length) return null;
 
   return (

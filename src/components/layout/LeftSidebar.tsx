@@ -3,17 +3,13 @@ import { FiLogOut } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { EventNote, CalendarToday, Article } from '@mui/icons-material';
+import NotificationCenter from '../ui/NotificationCenter';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const menuItems = [
   { icon: <HiOutlineHome size={22} />, label: 'Inicio', path: '/' },
   { icon: <HiOutlineUser size={22} />, label: 'Perfil', path: '/profile' },
   { icon: <HiOutlineChat size={22} />, label: 'Mensajes', path: '/direct-messages' },
-];
-
-const notifications = [
-  'Tienes 2 mensajes nuevos',
-  'Nuevo evento agregado',
-  'Actualización de perfil completada',
 ];
 
 interface LeftSidebarProps {
@@ -24,6 +20,7 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
+  const { notifications, markAsRead } = useNotifications();
 
   const handleLogout = async () => {
     await logout();
@@ -66,16 +63,12 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
           <FiLogOut /> Cerrar sesión
         </button>
       </div>
-      {/* Notificaciones */}
+      {/* Notificaciones reales */}
       <div className="rounded-lg shadow-md p-4 bg-white dark:bg-gray-800">
         <div className="font-semibold mb-2 text-gray-700 dark:text-gray-100 flex items-center gap-2">
           <HiOutlineBell /> Notificaciones
         </div>
-        <ul className="text-sm text-gray-600 dark:text-gray-200 space-y-1">
-          {notifications.map((n, i) => (
-            <li key={i} className="list-disc ml-4">{n}</li>
-          ))}
-        </ul>
+        <NotificationCenter notifications={notifications} onMarkAsRead={markAsRead} />
       </div>
     </div>
   );

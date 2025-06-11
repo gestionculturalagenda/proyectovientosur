@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import { Link } from 'react-router-dom';
+import ReactDOM from 'react-dom';
 
 interface PostCardProps {
   post: Post;
@@ -26,11 +27,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
 
   const { user } = useAuthStore();
   const { toggleLike, addComment, toggleFavorite } = usePostStore();
-  const [showMenu, setShowMenu] = useState(false);
   const commentInputRef = React.useRef<HTMLInputElement>(null);
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null);
 
   // Cargar usuario del post
   useEffect(() => {
@@ -143,12 +146,27 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
     setShowEmojiPicker(false);
   };
   
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowMenu((v) => {
+      const next = !v;
+      if (next && menuButtonRef.current) {
+        const rect = menuButtonRef.current.getBoundingClientRect();
+        setMenuPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+      }
+      return next;
+    });
+  };
+  
   if (!post || !postUser) {
     return null;
   }
   
   return (
-    <article className="feed-item rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-shadow duration-200 mb-6 overflow-visible">
+    <article className="feed-item rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-shadow duration-200 mb-6 overflow-visible relative">
       {/* Post Header */}
       <div className="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center space-x-3">
@@ -203,18 +221,24 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
         </div>
         <div className="flex items-center space-x-2 relative">
           <button
+            ref={menuButtonRef}
             type="button"
             className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-            onClick={e => { e.stopPropagation(); setShowMenu((v) => !v); }}
+            onClick={handleMenuClick}
             aria-label="Abrir menú"
             data-menu="post-menu"
           >
             <MoreHorizontal className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
-          {showMenu && (
+          {showMenu && menuPosition && ReactDOM.createPortal(
             <div
-              className="absolute right-0 top-full mt-2 z-50 bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 min-w-[180px] animate-fade-in"
-              style={{overflow: 'visible'}}
+              className="z-[9999] bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 min-w-[180px] animate-fade-in"
+              style={{
+                position: 'absolute',
+                top: menuPosition.top,
+                left: menuPosition.left,
+                overflow: 'visible',
+              }}
             >
               <ul className="py-2">
                 <li>
@@ -247,7 +271,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
                   </button>
                 </li>
               </ul>
-            </div>
+            </div>,
+            document.body
           )}
         </div>
       </div>

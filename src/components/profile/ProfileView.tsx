@@ -40,9 +40,12 @@ interface Follower {
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) => {
-  const { user: currentUser, logout } = useAuthStore();
+  const { user: currentUser, logout } = useAuthStore((state) => ({
+    user: state.user,
+    logout: state.logout
+  }), (a, b) => a.user?.id === b.user?.id && a.user?.username === b.user?.username && a.user?.displayName === b.user?.displayName);
   const [profileUser, setProfileUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'portfolio' | 'gallery' | 'followers' | 'about'>('portfolio');
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'gallery' | 'followers' | 'following' | 'about'>('portfolio');
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [followers, setFollowers] = useState<Follower[]>([]);
@@ -105,21 +108,27 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
       setGallery(galleryData || []);
 
       // Seguidores
-      const { data: followersData } = await supabase.rpc('get_user_followers', { user_id: userData.id });
+      const { data: followersData } = await supabase
+        .from('followers')
+        .select('follower_id, usuarios:usuarios!followers_follower_id_fkey(id, nombre_usuario, nombre_completo, avatar_url)')
+        .eq('following_id', userData.id);
       setFollowers((followersData || []).map((f: any) => ({
-        id: f.id,
-        username: f.nombre_usuario,
-        displayName: f.nombre_completo,
-        avatar: f.avatar_url
+        id: f.usuarios.id,
+        username: f.usuarios.nombre_usuario,
+        displayName: f.usuarios.nombre_completo,
+        avatar: f.usuarios.avatar_url
       })));
 
       // Siguiendo
-      const { data: followingData } = await supabase.rpc('get_user_following', { user_id: userData.id });
+      const { data: followingData } = await supabase
+        .from('followers')
+        .select('following_id, usuarios:usuarios!followers_following_id_fkey(id, nombre_usuario, nombre_completo, avatar_url)')
+        .eq('follower_id', userData.id);
       setFollowing((followingData || []).map((f: any) => ({
-        id: f.id,
-        username: f.nombre_usuario,
-        displayName: f.nombre_completo,
-        avatar: f.avatar_url
+        id: f.usuarios.id,
+        username: f.usuarios.nombre_usuario,
+        displayName: f.usuarios.nombre_completo,
+        avatar: f.usuarios.avatar_url
       })));
 
       // ¿El usuario actual sigue a este perfil?
@@ -131,6 +140,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
           .eq('following_id', userData.id)
           .single();
         setIsFollowing(!!followRow);
+      } else if (currentUser && userData.id === currentUser.id) {
+        // Si es tu propio perfil, siempre isFollowing = false
+        setIsFollowing(false);
       } else {
         setIsFollowing(false);
       }
@@ -144,8 +156,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
 
   useEffect(() => {
     loadUserData();
-    // eslint-disable-next-line
-  }, [userId, username, currentUser]);
+    // Ahora recarga si cambia userId, username o los campos clave del usuario autenticado
+  }, [userId, username, currentUser?.id, currentUser?.username, currentUser?.displayName]);
 
   // Funciones seguir/dejar de seguir
   const handleFollow = async () => {
@@ -315,6 +327,61 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
             </div>
           </div>
         );
+      case 'following':
+        return (
+          <div className="mt-4">
+            <div className="flex justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Siguiendo · {following.length}
+              </h3>
+              <Link to="/profile/following" className="text-sm text-primary-600 dark:text-primary-400">
+                Ver todos
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {following.map(user => (
+                <motion.div 
+                  key={user.id}
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  whileHover={{ x: 2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Link to={`/profile/${user.username}`} className="flex items-center">
+                    <div className="avatar h-10 w-10 mr-3">
+                      <img 
+                        src={user.avatar} 
+                        alt={user.displayName}
+                        className="avatar-img"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">
+                        {user.displayName}
+                      </h4>
+                      <p className="text-xs text-gray-500">@{user.username}</p>
+                    </div>
+                  </Link>
+                  <UserQuickActions
+                    user={user}
+                    initialIsFollowing={true}
+                    onFollowChange={() => loadUserData()}
+                  />
+                </motion.div>
+              ))}
+              <Link to="/discover" className="block">
+                <motion.div
+                  whileHover={{ x: 2 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-3 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 text-center"
+                >
+                  <span className="text-gray-400 dark:text-gray-600">
+                    Descubrir más creadores
+                  </span>
+                </motion.div>
+              </Link>
+            </div>
+          </div>
+        );
       case 'about':
         return (
           <div className="mt-4 space-y-4">
@@ -465,6 +532,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
             { id: 'portfolio', label: 'Portfolio', icon: <Camera className="h-4 w-4" /> },
             { id: 'gallery', label: 'Galería', icon: <BookOpen className="h-4 w-4" /> },
             { id: 'followers', label: 'Seguidores', icon: <Users className="h-4 w-4" /> },
+            { id: 'following', label: 'Siguiendo', icon: <Users className="h-4 w-4" /> },
             { id: 'about', label: 'Perfil', icon: <UserIcon className="h-4 w-4" /> }
           ].map(tab => (
             <button

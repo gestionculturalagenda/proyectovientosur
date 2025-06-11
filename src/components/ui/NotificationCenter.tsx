@@ -19,8 +19,17 @@ interface NotificationCenterProps {
   onMarkAsRead?: (id: string) => void;
 }
 
+const FILTERS = [
+  { label: 'Todas', value: 'all' },
+  { label: 'Mensajes', value: 'message' },
+  { label: 'Comentarios', value: 'comment' },
+  { label: 'Reacciones', value: 'reaction' },
+  { label: 'No leídas', value: 'unread' },
+];
+
 const NotificationCenter: React.FC<NotificationCenterProps> = ({ notifications, onMarkAsRead }) => {
   const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState('all');
   const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
@@ -31,6 +40,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ notifications, 
     }
     return () => { document.body.style.overflow = ''; };
   }, [open]);
+
+  let filtered = notifications;
+  if (filter === 'unread') filtered = notifications.filter(n => !n.read);
+  else if (filter !== 'all') filtered = notifications.filter(n => n.type === filter);
 
   return (
     <div className="relative">
@@ -58,10 +71,22 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ notifications, 
               <span className="font-bold text-gray-700 dark:text-gray-200">Notificaciones</span>
               <button className="text-xs text-primary-600 hover:underline" onClick={() => setOpen(false)}>Cerrar</button>
             </div>
+            {/* Filtros */}
+            <div className="flex gap-2 px-4 py-2 border-b border-gray-100 dark:border-gray-800 text-xs">
+              {FILTERS.map(f => (
+                <button
+                  key={f.value}
+                  className={`px-2 py-1 rounded-full transition font-medium ${filter === f.value ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300'}`}
+                  onClick={() => setFilter(f.value)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
             <div className="max-h-96 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
-              {notifications.length === 0 ? (
+              {filtered.length === 0 ? (
                 <div className="p-4 text-center text-gray-400">Sin notificaciones</div>
-              ) : notifications.map(n => (
+              ) : filtered.map(n => (
                 <div
                   key={n.id}
                   className={`p-4 flex flex-col gap-1 cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-900/20 ${!n.read ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''}`}
