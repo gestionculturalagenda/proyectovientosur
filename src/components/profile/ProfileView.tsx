@@ -8,6 +8,8 @@ import { AddPortfolioItemForm } from './AddPortfolioItemForm';
 import { AddGalleryItemForm } from './AddGalleryItemForm';
 import UserQuickActions from './UserQuickActions';
 import SuggestionsToFollow from './SuggestionsToFollow';
+import Modal from '../ui/Modal';
+import DiscoverPage from '../../pages/DiscoverPage';
 
 interface ProfileViewProps {
   onEdit?: () => void;
@@ -57,6 +59,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
   const [error, setError] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDiscoverModal, setShowDiscoverModal] = useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
 
   // Cerrar menú al hacer click fuera
@@ -317,17 +320,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
                   </motion.div>
                 );
               })}
-              <Link to="/discover" className="block">
-                <motion.div
-                  whileHover={{ x: 2 }}
-                  transition={{ duration: 0.2 }}
-                  className="p-3 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 text-center"
-                >
-                  <span className="text-gray-400 dark:text-gray-600">
-                    Descubrir más creadores
-                  </span>
-                </motion.div>
-              </Link>
+              <button
+                type="button"
+                className="block w-full mt-4 p-3 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 text-center text-gray-400 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition focus:outline-none focus:ring-2 focus:ring-primary-500"
+                onClick={() => setShowDiscoverModal(true)}
+              >
+                Descubrir más creadores
+              </button>
+              <Modal open={showDiscoverModal} onClose={() => setShowDiscoverModal(false)}>
+                <div className="p-2 sm:p-4">
+                  <DiscoverPage />
+                </div>
+              </Modal>
             </div>
           </div>
         );
@@ -372,6 +376,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
                   />
                 </motion.div>
               ))}
+              <button
+                type="button"
+                className="block w-full mt-4 p-3 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 text-center text-gray-400 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition focus:outline-none focus:ring-2 focus:ring-primary-500"
+                onClick={() => setShowDiscoverModal(true)}
+              >
+                Descubrir más creadores
+              </button>
+              <Modal open={showDiscoverModal} onClose={() => setShowDiscoverModal(false)}>
+                <div className="p-2 sm:p-4">
+                  <DiscoverPage />
+                </div>
+              </Modal>
             </div>
             {/* Sugerencias para descubrir personas */}
             <div className="mt-8">
