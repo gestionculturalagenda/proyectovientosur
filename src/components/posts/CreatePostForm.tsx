@@ -240,7 +240,7 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="feed-item mb-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
+    <div className="feed-item mb-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm rounded-none sm:rounded-lg mx-0 sm:mx-auto p-0 sm:p-0">
       <form onSubmit={handleSubmit}>
         {/* Contenido superior (avatar y preview) */}
         <div className="p-4 pb-2">

@@ -153,7 +153,7 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-none sm:rounded-lg shadow-md overflow-hidden mb-6 mx-0 sm:mx-auto">
       <div className="relative h-48 w-full">
         <img
           src={event.imagen_url || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80'}
@@ -172,54 +172,54 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
               {event.descripcion}
             </p>
           </div>
-        <div className="flex space-x-2 relative">
-          <button
-            type="button"
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-primary-500"
-            onClick={e => { e.stopPropagation(); setShowMenu((v) => !v); }}
-            aria-label="Abrir menú de opciones del evento"
-            data-menu="evento-menu"
-          >
-            <MoreHorizontal className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-          </button>
-          {showMenu && (
-            <div
-              className="absolute right-0 top-10 z-50 bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 min-w-[180px] animate-fade-in"
+          <div className="flex space-x-2 relative">
+            <button
+              type="button"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline focus:ring-2 focus:ring-primary-500"
+              onClick={e => { e.stopPropagation(); setShowMenu((v) => !v); }}
+              aria-label="Abrir menú de opciones del evento"
+              data-menu="evento-menu"
             >
-              <ul className="py-2">
-                <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => {navigator.clipboard.writeText(window.location.origin + '/eventos/' + event.id); setShowMenu(false); toast.success('¡Enlace copiado!')}} aria-label="Copiar enlace del evento">
-                    Guardar enlace
-                  </button>
-                </li>
-                <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={handleShare} aria-label="Compartir evento">
-                    Compartir evento
-                  </button>
-                </li>
-                {isCreator && (
-                  <>
-                    <li>
-                      <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => { setShowMenu(false); onEdit && onEdit(); }} aria-label="Editar evento">
-                        Editar evento
-                      </button>
-                    </li>
-                    <li>
-                      <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-gray-800" onClick={async () => { await handleDelete(); setShowMenu(false); }} aria-label="Eliminar evento">
-                        Eliminar evento
-                      </button>
-                    </li>
-                  </>
-                )}
-                <li>
-                  <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={e => { e.stopPropagation(); setShowMenu(false); }} aria-label="Cerrar menú de opciones">
-                    Cancelar
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
+              <MoreHorizontal className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            </button>
+            {showMenu && (
+              <div
+                className="absolute right-0 top-10 z-50 bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 min-w-[180px] animate-fade-in"
+              >
+                <ul className="py-2">
+                  <li>
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => {navigator.clipboard.writeText(window.location.origin + '/eventos/' + event.id); setShowMenu(false); toast.success('¡Enlace copiado!')}} aria-label="Copiar enlace del evento">
+                      Guardar enlace
+                    </button>
+                  </li>
+                  <li>
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={handleShare} aria-label="Compartir evento">
+                      Compartir evento
+                    </button>
+                  </li>
+                  {isCreator && (
+                    <>
+                      <li>
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => { setShowMenu(false); onEdit && onEdit(); }} aria-label="Editar evento">
+                          Editar evento
+                        </button>
+                      </li>
+                      <li>
+                        <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-gray-800" onClick={async () => { await handleDelete(); setShowMenu(false); }} aria-label="Eliminar evento">
+                          Eliminar evento
+                        </button>
+                      </li>
+                    </>
+                  )}
+                  <li>
+                    <button className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={e => { e.stopPropagation(); setShowMenu(false); }} aria-label="Cerrar menú de opciones">
+                      Cancelar
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Fecha y categoría */}
@@ -249,70 +249,99 @@ const EventoCulturalCard: React.FC<EventoCulturalCardProps> = ({ event, onEdit, 
           </button>
         </div>
 
-        {/* Lista de comentarios */}
-        {(comments.length > 0 || isCommentExpanded) && (
-          <div className="mb-4 space-y-3">
-            {comments.slice(0, isCommentExpanded ? undefined : 2).map(comment => {
-              const commentUser = commentUsers[comment.autor_id];
-              return (
-                <div key={comment.id} className="flex space-x-2">
+        {/* Comentarios */}
+        {isCommentExpanded && (
+          <div className="mt-4">
+            <div className="space-y-4">
+              {/* Lista de comentarios */}
+              {comments.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-sm italic">
+                  No hay comentarios aún.
+                </p>
+              ) : (
+                comments.map((comment) => {
+                  const isAuthor = comment.autor_id === user?.id;
+                  const userData = commentUsers[comment.autor_id];
+                  return (
+                    <div key={comment.id} className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={userData?.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userData?.name || '')}
+                          alt={userData?.name}
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {userData?.name}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {format(new Date(comment.creado_en), 'dd MMM yyyy HH:mm', { locale: es })}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          {comment.contenido}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <button
+                            onClick={async () => {
+                              if (!isAuthor) return;
+                              await supabase
+                                .from('comentarios_evento')
+                                .delete()
+                                .eq('id', comment.id);
+                              setComments(comments.filter(c => c.id !== comment.id));
+                            }}
+                            className="text-red-600 dark:text-red-400 text-xs flex items-center space-x-1 hover:underline"
+                            aria-label="Eliminar comentario"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span>Eliminar</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Formulario de nuevo comentario */}
+            {user && (
+              <form onSubmit={handleAddComment} className="mt-4">
+                <div className="flex items-center space-x-3">
                   <div className="flex-shrink-0">
-                    <Link to={commentUser?.username ? `/profile/${commentUser.username}` : '#'} className="avatar w-8 h-8 block">
-                      <img
-                        src={commentUser?.avatar || '/default-avatar.png'}
-                        alt={commentUser?.displayName ? `Avatar de ${commentUser.displayName}` : 'Avatar de usuario'}
-                        className="avatar-img"
-                      />
-                    </Link>
+                    <img
+                      src={user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name)}
+                      alt={user.name}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
                   </div>
                   <div className="flex-1">
-                    <div className="bg-white dark:bg-gray-900 p-2 rounded-lg">
-                      <Link to={commentUser?.username ? `/profile/${commentUser.username}` : '#'} className="font-medium text-sm text-gray-900 dark:text-white hover:underline">
-                        {commentUser?.displayName || 'Usuario'}
-                      </Link>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{comment.contenido}</p>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">{comment.creado_en ? format(new Date(comment.creado_en), 'd MMM HH:mm', { locale: es }) : ''}</p>
+                    <textarea
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      className="w-full p-3 text-sm rounded-lg border focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
+                      rows={2}
+                      placeholder="Escribe un comentario..."
+                      aria-label="Escribe un comentario"
+                    />
                   </div>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    aria-label="Agregar comentario"
+                  >
+                    <Send className="h-5 w-5" />
+                  </button>
                 </div>
-              );
-            })}
-            {comments.length > 2 && !isCommentExpanded && (
-              <button onClick={() => setIsCommentExpanded(true)} className="text-sm text-primary-600 dark:text-primary-400 font-medium focus:outline focus:ring-2 focus:ring-primary-500" aria-label="Ver todos los comentarios" type="button">
-                Ver todos los comentarios
-              </button>
+              </form>
             )}
           </div>
         )}
-
-        <div className="border-t dark:border-gray-700 pt-4">
-          {user && (
-            <form onSubmit={handleAddComment} className="flex gap-2 items-center">
-              <div className="avatar w-8 h-8">
-                <img
-                  src={user.avatar}
-                  alt={user.displayName ? `Avatar de ${user.displayName}` : 'Avatar de usuario'}
-                  className="avatar-img"
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="Escribe un comentario..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="flex-1 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm"
-              />
-              <button
-                type="submit"
-                disabled={!newComment.trim()}
-                className="p-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 focus:outline focus:ring-2 focus:ring-primary-500"
-                aria-label="Enviar comentario"
-              >
-                <Send className="h-5 w-5" />
-              </button>
-            </form>
-          )}
-        </div>
       </div>
     </div>
   );
