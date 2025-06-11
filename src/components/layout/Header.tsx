@@ -7,12 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import ConversationModal from './ConversationModal';
 import MobileDrawerMenu from './MobileDrawerMenu';
 import NotificationCenter from '../ui/NotificationCenter';
-import { useNotifications } from '../../hooks/useNotifications';
+import { useNotificationStore } from '../../store/notificationStore';
 import { ChevronDown } from 'lucide-react';
 
 const Header = () => {
   const { user, logout } = useAuthStore();
-  const { notifications, markAsRead } = useNotifications();
+  // Obtener notificaciones desde el store, no volver a usar el hook aquí
+  const notifications = useNotificationStore(state => state.notifications);
+  const markAsRead = useNotificationStore(state => state.markAsRead);
   const [showMenu, setShowMenu] = useState(false);
   const [showProfileSearch, setShowProfileSearch] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);

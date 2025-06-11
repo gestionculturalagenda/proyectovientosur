@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { EventNote, CalendarToday, Article } from '@mui/icons-material';
 import NotificationCenter from '../ui/NotificationCenter';
-import { useNotifications } from '../../hooks/useNotifications';
+import { useNotificationStore } from '../../store/notificationStore';
 
 const menuItems = [
   { icon: <HiOutlineHome size={22} />, label: 'Inicio', path: '/' },
@@ -20,7 +20,9 @@ export default function LeftSidebar({ onOpenConversations }: LeftSidebarProps) {
   const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
-  const { notifications, markAsRead } = useNotifications();
+  // Obtener notificaciones desde el store, no volver a usar el hook aquí
+  const notifications = useNotificationStore(state => state.notifications);
+  const markAsRead = useNotificationStore(state => state.markAsRead);
 
   const handleLogout = async () => {
     await logout();

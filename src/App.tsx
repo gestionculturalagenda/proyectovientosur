@@ -3,17 +3,10 @@ import AppRoutes from './routes';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'sonner';
-import { useEffect } from 'react';
-import { useNotificationStore } from './store/notificationStore';
-import { useAuthStore } from './store/authStore';
+import { useNotifications } from './hooks/useNotifications';
 
 function App() {
-  const user = useAuthStore(state => state.user);
-  useEffect(() => {
-    if (user?.id) {
-      useNotificationStore.getState().subscribeToNotifications();
-    }
-  }, [user?.id]);
+  useNotifications(); // Centraliza la gestión de notificaciones
 
   return (
     <BrowserRouter>

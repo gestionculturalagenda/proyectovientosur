@@ -1,6 +1,6 @@
 import { HiOutlineMenu, HiOutlineDotsHorizontal } from 'react-icons/hi';
 import NotificationCenter from '../ui/NotificationCenter';
-import { useNotifications } from '../../hooks/useNotifications';
+import { useNotificationStore } from '../../store/notificationStore';
 
 interface MobileHeaderProps {
   onOpenLeft: () => void;
@@ -8,7 +8,9 @@ interface MobileHeaderProps {
 }
 
 const MobileHeader: React.FC<MobileHeaderProps> = ({ onOpenLeft, onOpenRight }) => {
-  const { notifications, markAsRead } = useNotifications();
+  // Obtener notificaciones desde el store, no volver a usar el hook aquí
+  const notifications = useNotificationStore((state: any) => state.notifications);
+  const markAsRead = useNotificationStore((state: any) => state.markAsRead);
 
   return (
     <header className="lg:hidden sticky top-0 z-40 bg-white dark:bg-gray-900 shadow-md flex items-center justify-between px-4 py-2 border-b border-gray-100 dark:border-gray-800">
