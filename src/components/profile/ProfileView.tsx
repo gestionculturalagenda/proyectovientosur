@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import { AddPortfolioItemForm } from './AddPortfolioItemForm';
 import { AddGalleryItemForm } from './AddGalleryItemForm';
 import UserQuickActions from './UserQuickActions';
+import SuggestionsToFollow from './SuggestionsToFollow';
 
 interface ProfileViewProps {
   onEdit?: () => void;
@@ -236,36 +237,39 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
       case 'gallery':
         return (
           <div className="mt-4 space-y-3">
-            {gallery.map((item) => (
-              <motion.div 
-                key={item.id}
-                className="card"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="aspect-video rounded-lg overflow-hidden mb-2">
-                  <img 
-                    src={item.image_url} 
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="font-medium">{item.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {item.location}, {new Date(item.date).toLocaleDateString()}
-                </p>
-              </motion.div>
-            ))}
-            {(!userId || userId === currentUser?.id) && (
-              <Link to="/gallery/new" className="block" tabIndex={0} aria-label="Agregar nueva exposición">
-                <motion.div
+            {gallery.length === 0 ? (
+              <div className="text-center text-gray-400 dark:text-gray-500 py-8">No hay exposiciones en la galería.</div>
+            ) : (
+              gallery.map((item) => (
+                <motion.div 
+                  key={item.id}
+                  className="card"
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2 }}
-                  className="card p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 text-center focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  <span className="text-gray-400 dark:text-gray-600">+ Agregar nueva exposición</span>
+                  <div className="aspect-video rounded-lg overflow-hidden mb-2">
+                    <img 
+                      src={item.image_url} 
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-medium">{item.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {item.location}, {new Date(item.date).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{item.description}</p>
                 </motion.div>
-              </Link>
+              ))
+            )}
+            {(!userId || userId === currentUser?.id) && (
+              <button
+                onClick={() => setShowAddGalleryModal(true)}
+                className="w-full mt-4 py-3 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                aria-label="Agregar nueva exposición"
+              >
+                + Agregar nueva exposición
+              </button>
             )}
           </div>
         );
@@ -368,17 +372,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onEdit, userId, username }) =
                   />
                 </motion.div>
               ))}
-              <Link to="/discover" className="block">
-                <motion.div
-                  whileHover={{ x: 2 }}
-                  transition={{ duration: 0.2 }}
-                  className="p-3 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 text-center"
-                >
-                  <span className="text-gray-400 dark:text-gray-600">
-                    Descubrir más creadores
-                  </span>
-                </motion.div>
-              </Link>
+            </div>
+            {/* Sugerencias para descubrir personas */}
+            <div className="mt-8">
+              <SuggestionsToFollow />
             </div>
           </div>
         );
