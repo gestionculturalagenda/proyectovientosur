@@ -24,6 +24,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingComments, setLoadingComments] = useState(true);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const { user } = useAuthStore();
   const { toggleLike, addComment, toggleFavorite } = usePostStore();
@@ -279,7 +281,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
           {(post as any).mediaUrls.map((media: {url: string, type: string, name?: string}, idx: number) => (
             <React.Fragment key={media.url}>
               {media.type === 'image' && (
-                <img src={media.url} alt={`Imagen ${idx + 1}`} className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-[180px] max-h-[220px] object-contain shadow-sm hover:shadow-md transition-shadow duration-200" />
+                <img 
+                  src={media.url} 
+                  alt={`Imagen ${idx + 1}`} 
+                  className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-[180px] max-h-[220px] object-contain shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                  onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
+                />
               )}
               {media.type === 'video' && (
                 <video src={media.url} controls className="rounded-xl border border-gray-200 dark:border-gray-800 w-auto max-w-[220px] max-h-[220px] object-contain shadow-sm" />
@@ -294,6 +301,42 @@ const PostCard: React.FC<PostCardProps> = ({ post, disableCardNavigation, onDele
               )}
             </React.Fragment>
           ))}
+
+          {/* Lightbox/Modal para imágenes */}
+          {lightboxOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={() => setLightboxOpen(false)}>
+              <button
+                className="absolute top-4 right-4 text-white text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/70"
+                onClick={e => { e.stopPropagation(); setLightboxOpen(false); }}
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
+              <button
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/70"
+                onClick={e => { e.stopPropagation(); setLightboxIndex(i => (i - 1 + (post as any).mediaUrls.length) % (post as any).mediaUrls.length); }}
+                aria-label="Anterior"
+              >
+                ‹
+              </button>
+              <img
+                src={(post as any).mediaUrls[lightboxIndex].url}
+                alt={`Imagen ampliada ${lightboxIndex + 1}`}
+                className="max-h-[80vh] max-w-[90vw] rounded-xl shadow-2xl border-4 border-white object-contain"
+                onClick={e => e.stopPropagation()}
+              />
+              <button
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/70"
+                onClick={e => { e.stopPropagation(); setLightboxIndex(i => (i + 1) % (post as any).mediaUrls.length); }}
+                aria-label="Siguiente"
+              >
+                ›
+              </button>
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/40 rounded px-3 py-1">
+                {lightboxIndex + 1} / {(post as any).mediaUrls.length}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         // Soporte retrocompatibilidad mediaUrl único

@@ -8,6 +8,7 @@ import AudioRecorder from '../ui/AudioRecorder';
 import VideoRecorder from '../ui/VideoRecorder';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
+import { supabase } from '../../lib/supabase';
 
 interface CreatePostFormProps {
   onSuccess?: () => void;
@@ -178,15 +179,40 @@ const CreatePostForm: React.FC<CreatePostFormProps> = ({ onSuccess }) => {
     setShowModalEmojiPicker(false);
   };
   // Handler para confirmar adjunto múltiple
-  const handleConfirmPreview = () => {
+  const handleConfirmPreview = async () => {
     if (previewFiles.length > 0) {
-      setMediaUrls(previewFiles);
-      setPostType(previewFiles[0].type as PostType); // El tipo principal será el del primer archivo
-      setContent(modalText);
+      setIsSubmitting(true);
+      try {
+        // Subir todos los archivos a Supabase Storage y obtener URLs públicas
+        const uploadedFiles = await Promise.all(previewFiles.map(async (file) => {
+          // Si la url ya es pública (ya subida), la dejamos
+          if (file.url.startsWith('https://')) return file;
+          // Si es un blob local, subimos
+          const response = await fetch(file.url);
+          const blob = await response.blob();
+          const ext = file.name.split('.').pop();
+          const filePath = `posts/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+          const { error } = await supabase.storage.from('media').upload(filePath, blob);
+          if (error) throw error;
+          const { data: urlData } = supabase.storage.from('media').getPublicUrl(filePath);
+          return { ...file, url: urlData.publicUrl };
+        }));
+        setMediaUrls(uploadedFiles);
+        setPostType(uploadedFiles[0].type as PostType);
+        setContent(modalText);
+      } catch (err) {
+        toast.error('Error al subir archivos adjuntos');
+      } finally {
+        setIsSubmitting(false);
+        setShowPreviewModal(false);
+        setPreviewFiles([]);
+        setModalText('');
+      }
+    } else {
+      setShowPreviewModal(false);
+      setPreviewFiles([]);
+      setModalText('');
     }
-    setShowPreviewModal(false);
-    setPreviewFiles([]);
-    setModalText('');
   };
   const handleCancelPreview = () => {
     setShowPreviewModal(false);

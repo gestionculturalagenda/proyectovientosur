@@ -21,6 +21,7 @@ const RightSidebar: React.FC = () => {
 			const { data } = await supabase
 				.from('usuarios')
 				.select('id, nombre_usuario, avatar_url, last_online')
+				.not('last_online', 'is', null)
 				.gt('last_online', twoMinutesAgo)
 				.order('last_online', { ascending: false });
 			setOnlineUsers(data || []);
