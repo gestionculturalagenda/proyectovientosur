@@ -1,0 +1,1 @@
+import{r as a,j as s,E as i,P as r}from"./index-xTlhfwH_.js";const l=()=>{const[t,e]=a.useState(!1);return s.jsx("div",{className:"max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 pb-24",children:t?s.jsx(i,{onCancel:()=>e(!1)}):s.jsx(r,{onEdit:()=>e(!0)})})};export{l as default};
