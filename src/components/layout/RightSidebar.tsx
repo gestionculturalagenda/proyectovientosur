@@ -4,12 +4,16 @@ import { ConversationsList } from '../messages/ConversationsList';
 import { useEventStore } from '../../store/eventStore';
 import { supabase } from '../../lib/supabase';
 
-const trends = ['#cultura', '#eventos', '#comunidad', '#tendencias'];
+function extractHashtags(text: string): string[] {
+  if (!text) return [];
+  return (text.match(/#[\wáéíóúüñÁÉÍÓÚÜÑ0-9_]+/g) || []).map(t => t.toLowerCase());
+}
 
 const RightSidebar: React.FC = () => {
 	const [showConversations, setShowConversations] = useState(false);
 	const { events, fetchEvents, isLoading } = useEventStore();
 	const [onlineUsers, setOnlineUsers] = useState<{ id: string; nombre_usuario: string; avatar_url: string }[]>([]);
+	const [trends, setTrends] = useState<string[]>([]);
 
 	useEffect(() => {
 		fetchEvents();
@@ -29,6 +33,32 @@ const RightSidebar: React.FC = () => {
 		fetchOnline();
 		const interval = setInterval(fetchOnline, 30000); // refresca cada 30s
 		return () => clearInterval(interval);
+	}, []);
+
+	useEffect(() => {
+		// Tendencias reales de los últimos 7 días
+		const fetchTrends = async () => {
+			const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+			const { data, error } = await supabase
+				.from('posts')
+				.select('contenido, creado_en')
+				.gte('creado_en', since)
+				.order('creado_en', { ascending: false });
+			if (error) return;
+			const hashtagCount: Record<string, number> = {};
+			(data || []).forEach((post: any) => {
+				extractHashtags(post.contenido).forEach(tag => {
+					hashtagCount[tag] = (hashtagCount[tag] || 0) + 1;
+				});
+			});
+			const sorted = Object.entries(hashtagCount)
+				.sort((a, b) => b[1] - a[1])
+				.slice(0, 8)
+				.map(([tag]) => tag);
+			// Cambia aquí los valores por defecto
+			setTrends(sorted.length > 0 ? sorted : ['#redvientosur', '#cultura', '#Moron']);
+		};
+		fetchTrends();
 	}, []);
 
 	const upcomingEvents = events
